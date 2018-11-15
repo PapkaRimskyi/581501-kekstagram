@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
 * Студент: [Георгий Гуров](https://up.htmlacademy.ru/javascript/16/user/581501).
-* Наставник: `Неизвестно`.
+* Наставник: [Юлия  Плонина](https://up.htmlacademy.ru/javascript/16/user/64655).
 
 ---
 
