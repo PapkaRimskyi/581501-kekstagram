@@ -1,4 +1,16 @@
 'use strict';
+var pictureTemplate = document.querySelector('#picture').content;
+var picturesSection = document.querySelector('.pictures');
+var bigPicture = document.querySelector('.big-picture');
+// var socialComments = document.querySelector('.social__comments');
+// var socialComment = document.querySelector('.social__comment');
+var socialCommentCount = document.querySelector('.social__comment-count');
+var commentsLoader = document.querySelector('.comments-loader');
+
+socialCommentCount.classList.add('visually-hidden');
+commentsLoader.classList.add('visually-hidden');
+bigPicture.classList.remove('hidden');
+
 var commentData = ['Всё отлично!', 'В целом всё неплохо. Но не всё.', 'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.', 'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.', 'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.', 'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'];
 var nameData = ['Александр', 'Петр', 'Василиса', 'Диана', 'Владимир', 'Константин'];
 
@@ -39,5 +51,30 @@ var getCommentData = function () {
   return comments;
 };
 
+var getRandomUserPhoto = function (dataMassive) {
+  var userPhoto = pictureTemplate.cloneNode(true);
+  userPhoto.querySelector('.picture__img').src = dataMassive.url;
+  userPhoto.querySelector('.picture__likes').textContent = dataMassive.likes;
+  userPhoto.querySelector('.picture__comments').textContent = dataMassive.comments.length;
+  return userPhoto;
+};
+
+var generationPhoto = function (dataMassive) {
+  var fragment = document.createDocumentFragment();
+  for (var i = 0; i < dataMassive.length; i++) {
+    var userPhoto = getRandomUserPhoto(dataMassive[i]);
+    fragment.appendChild(userPhoto);
+  }
+  return fragment;
+};
+
+var generationBigPhoto = function (dataMassive) {
+  var bigPhoto = bigPicture;
+  bigPhoto.querySelector('.big-picture__img').querySelector('img').src = dataMassive[0].url;
+  bigPhoto.querySelector('.likes-count').textContent = dataMassive[0].likes;
+  bigPhoto.querySelector('.comments-count').textContent = dataMassive[0].comments.length;
+};
+
 var dataMassive = getPhotoData();
-console.log(dataMassive);
+picturesSection.appendChild(generationPhoto(dataMassive));
+generationBigPhoto(dataMassive);
