@@ -19,7 +19,7 @@ var randomNumber = function (min, max) {
 };
 
 var getPhotoData = function () {
-  var dataMassive = [];
+  var dataArray = [];
   for (var i = 1; i <= 25; i++) {
     var comments = getCommentData();
     var dataObj = {};
@@ -28,9 +28,9 @@ var getPhotoData = function () {
     var likes = randomNumber(15, 200);
     dataObj.likes = likes;
     dataObj.comments = comments;
-    dataMassive.push(dataObj);
+    dataArray.push(dataObj);
   }
-  return dataMassive;
+  return dataArray;
 };
 
 var getCommentData = function () {
@@ -51,49 +51,48 @@ var getCommentData = function () {
   return comments;
 };
 
-var getRandomAndBigPhoto = function (dataMassive, comments) {
-  if (comments) {
-    var userComment = socialComment.cloneNode(true);
-    userComment.querySelector('.social__picture').src = comments.avatar;
-    userComment.querySelector('.social__text').textContent = comments.message;
-    return userComment;
-  } else {
-    var userPhoto = pictureTemplate.cloneNode(true);
-    userPhoto.querySelector('.picture__img').src = dataMassive.url;
-    userPhoto.querySelector('.picture__likes').textContent = dataMassive.likes;
-    userPhoto.querySelector('.picture__comments').textContent = dataMassive.comments.length;
-    return userPhoto;
-  }
+var getUserPhotoSlot = function (dataArray) {
+  var userPhoto = pictureTemplate.cloneNode(true);
+  userPhoto.querySelector('.picture__img').src = dataArray.url;
+  userPhoto.querySelector('.picture__likes').textContent = dataArray.likes;
+  userPhoto.querySelector('.picture__comments').textContent = dataArray.comments.length;
+  return userPhoto;
 };
 
-var generationPhoto = function (dataMassive) {
+var getGenerationUserPhotos = function (dataArray) {
   var fragment = document.createDocumentFragment();
-  for (var i = 0; i < dataMassive.length; i++) {
-    var userPhoto = getRandomAndBigPhoto(dataMassive[i]);
+  for (var i = 0; i < dataArray.length; i++) {
+    var userPhoto = getUserPhotoSlot(dataArray[i]);
     fragment.appendChild(userPhoto);
   }
   return fragment;
 };
 
-var generationBigPhoto = function (dataMassive) {
-  var bigPhoto = bigPicture;
-  bigPhoto.querySelector('.big-picture__img').querySelector('img').src = dataMassive[0].url;
-  bigPhoto.querySelector('.social__caption').textContent = 'description';
-  bigPhoto.querySelector('.likes-count').textContent = dataMassive[0].likes;
-  bigPhoto.querySelector('.comments-count').textContent = dataMassive[0].comments.length;
+var getGenerationBigPhoto = function (dataArray) {
+  bigPicture.querySelector('.big-picture__img').querySelector('img').src = dataArray.url;
+  bigPicture.querySelector('.social__caption').textContent = 'description';
+  bigPicture.querySelector('.likes-count').textContent = dataArray.likes;
+  bigPicture.querySelector('.comments-count').textContent = dataArray.comments.length;
 };
 
-var generationCommentBigPhoto = function (dataMassive) {
-  var comments = dataMassive[0].comments;
+var getCommentBigPhoto = function (dataArrayElement, comments) {
+  var userComment = socialComment.cloneNode(true);
+  userComment.querySelector('.social__picture').src = comments.avatar;
+  userComment.querySelector('.social__text').textContent = comments.message;
+  return userComment;
+};
+
+var getGenerationCommentBigPhoto = function (dataArray) {
+  var comments = dataArray[0].comments;
   var fragment = document.createDocumentFragment();
-  for (var i = 0; i < dataMassive[0].comments.length; i++) {
-    var userComment = getRandomAndBigPhoto(dataMassive[0], comments[i]);
+  for (var i = 0; i < dataArray[0].comments.length; i++) {
+    var userComment = getCommentBigPhoto(dataArray[0], comments[i]);
     fragment.appendChild(userComment);
   }
   return fragment;
 };
 
-var dataMassive = getPhotoData();
-picturesSection.appendChild(generationPhoto(dataMassive));
-generationBigPhoto(dataMassive);
-socialComments.appendChild(generationCommentBigPhoto(dataMassive));
+var dataArray = getPhotoData();
+picturesSection.appendChild(getGenerationUserPhotos(dataArray));
+getGenerationBigPhoto(dataArray[0]);
+socialComments.appendChild(getGenerationCommentBigPhoto(dataArray));
