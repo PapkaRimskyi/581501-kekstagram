@@ -2,8 +2,8 @@
 var pictureTemplate = document.querySelector('#picture').content;
 var picturesSection = document.querySelector('.pictures');
 var bigPicture = document.querySelector('.big-picture');
-// var socialComments = document.querySelector('.social__comments');
-// var socialComment = document.querySelector('.social__comment');
+var socialComments = document.querySelector('.social__comments');
+var socialComment = document.querySelector('.social__comment');
 var socialCommentCount = document.querySelector('.social__comment-count');
 var commentsLoader = document.querySelector('.comments-loader');
 
@@ -51,18 +51,25 @@ var getCommentData = function () {
   return comments;
 };
 
-var getRandomUserPhoto = function (dataMassive) {
-  var userPhoto = pictureTemplate.cloneNode(true);
-  userPhoto.querySelector('.picture__img').src = dataMassive.url;
-  userPhoto.querySelector('.picture__likes').textContent = dataMassive.likes;
-  userPhoto.querySelector('.picture__comments').textContent = dataMassive.comments.length;
-  return userPhoto;
+var getRandomAndBigPhoto = function (dataMassive, comments) {
+  if (comments) {
+    var userComment = socialComment.cloneNode(true);
+    userComment.querySelector('.social__picture').src = comments.avatar;
+    userComment.querySelector('.social__text').textContent = comments.message;
+    return userComment;
+  } else {
+    var userPhoto = pictureTemplate.cloneNode(true);
+    userPhoto.querySelector('.picture__img').src = dataMassive.url;
+    userPhoto.querySelector('.picture__likes').textContent = dataMassive.likes;
+    userPhoto.querySelector('.picture__comments').textContent = dataMassive.comments.length;
+    return userPhoto;
+  }
 };
 
 var generationPhoto = function (dataMassive) {
   var fragment = document.createDocumentFragment();
   for (var i = 0; i < dataMassive.length; i++) {
-    var userPhoto = getRandomUserPhoto(dataMassive[i]);
+    var userPhoto = getRandomAndBigPhoto(dataMassive[i]);
     fragment.appendChild(userPhoto);
   }
   return fragment;
@@ -71,10 +78,22 @@ var generationPhoto = function (dataMassive) {
 var generationBigPhoto = function (dataMassive) {
   var bigPhoto = bigPicture;
   bigPhoto.querySelector('.big-picture__img').querySelector('img').src = dataMassive[0].url;
+  bigPhoto.querySelector('.social__caption').textContent = 'description';
   bigPhoto.querySelector('.likes-count').textContent = dataMassive[0].likes;
   bigPhoto.querySelector('.comments-count').textContent = dataMassive[0].comments.length;
+};
+
+var generationCommentBigPhoto = function (dataMassive) {
+  var comments = dataMassive[0].comments;
+  var fragment = document.createDocumentFragment();
+  for (var i = 0; i < dataMassive[0].comments.length; i++) {
+    var userComment = getRandomAndBigPhoto(dataMassive[0], comments[i]);
+    fragment.appendChild(userComment);
+  }
+  return fragment;
 };
 
 var dataMassive = getPhotoData();
 picturesSection.appendChild(generationPhoto(dataMassive));
 generationBigPhoto(dataMassive);
+socialComments.appendChild(generationCommentBigPhoto(dataMassive));
