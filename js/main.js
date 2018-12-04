@@ -34,7 +34,7 @@ var getPhotoData = function () {
 };
 
 var getCommentData = function () {
-  var comments = [];
+  var commentsArray = [];
   var randomMessageCount = randomNumber(1, 2);
   for (var i = 0; i < randomMessageCount; i++) {
     var commentObj = {};
@@ -46,9 +46,9 @@ var getCommentData = function () {
 
     var avatarIndex = randomNumber(1, 6);
     commentObj.avatar = 'img/avatar-' + avatarIndex + '.svg';
-    comments.push(commentObj);
+    commentsArray.push(commentObj);
   }
-  return comments;
+  return commentsArray;
 };
 
 var getUserPhotoSlot = function (dataArray) {
@@ -59,7 +59,7 @@ var getUserPhotoSlot = function (dataArray) {
   return userPhoto;
 };
 
-var getGenerationUserPhotos = function (dataArray) {
+var runGenerationUsersPhoto = function (dataArray) {
   var fragment = document.createDocumentFragment();
   for (var i = 0; i < dataArray.length; i++) {
     var userPhoto = getUserPhotoSlot(dataArray[i]);
@@ -68,31 +68,31 @@ var getGenerationUserPhotos = function (dataArray) {
   return fragment;
 };
 
-var getGenerationBigPhoto = function (dataArray) {
+var runGenerationBigPhoto = function (dataArray) {
   bigPicture.querySelector('.big-picture__img').querySelector('img').src = dataArray.url;
   bigPicture.querySelector('.social__caption').textContent = 'description';
   bigPicture.querySelector('.likes-count').textContent = dataArray.likes;
   bigPicture.querySelector('.comments-count').textContent = dataArray.comments.length;
 };
 
-var getCommentBigPhoto = function (dataArrayElement, comments) {
+var getCommentUnderBigPhoto = function (dataArrayElement, commentsArray) {
   var userComment = socialComment.cloneNode(true);
-  userComment.querySelector('.social__picture').src = comments.avatar;
-  userComment.querySelector('.social__text').textContent = comments.message;
+  userComment.querySelector('.social__picture').src = commentsArray.avatar;
+  userComment.querySelector('.social__text').textContent = commentsArray.message;
   return userComment;
 };
 
-var getGenerationCommentBigPhoto = function (dataArray) {
-  var comments = dataArray[0].comments;
+var runGenerationCommentBigPhoto = function (dataArray) {
+  var commentsArray = dataArray[0].comments;
   var fragment = document.createDocumentFragment();
   for (var i = 0; i < dataArray[0].comments.length; i++) {
-    var userComment = getCommentBigPhoto(dataArray[0], comments[i]);
+    var userComment = getCommentUnderBigPhoto(dataArray[0], commentsArray[i]);
     fragment.appendChild(userComment);
   }
   return fragment;
 };
 
 var dataArray = getPhotoData();
-picturesSection.appendChild(getGenerationUserPhotos(dataArray));
-getGenerationBigPhoto(dataArray[0]);
-socialComments.appendChild(getGenerationCommentBigPhoto(dataArray));
+picturesSection.appendChild(runGenerationUsersPhoto(dataArray));
+runGenerationBigPhoto(dataArray[0]);
+socialComments.appendChild(runGenerationCommentBigPhoto(dataArray));
