@@ -11,17 +11,17 @@ socialCommentCount.classList.add('visually-hidden');
 commentsLoader.classList.add('visually-hidden');
 bigPicture.classList.remove('hidden');
 
-var commentData = ['Всё отлично!', 'В целом всё неплохо. Но не всё.', 'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.', 'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.', 'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.', 'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'];
-var nameData = ['Александр', 'Петр', 'Василиса', 'Диана', 'Владимир', 'Константин'];
+var commentDataArray = ['Всё отлично!', 'В целом всё неплохо. Но не всё.', 'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.', 'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.', 'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.', 'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'];
+var nameDataArray = ['Александр', 'Петр', 'Василиса', 'Диана', 'Владимир', 'Константин'];
 
 var randomNumber = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
-var getPhotoData = function () {
+var getPhotosData = function () {
   var dataArray = [];
   for (var i = 1; i <= 25; i++) {
-    var comments = getCommentData();
+    var comments = getCommentsData();
     var dataObj = {};
     dataObj.url = 'photos/' + i + '.jpg';
 
@@ -33,16 +33,16 @@ var getPhotoData = function () {
   return dataArray;
 };
 
-var getCommentData = function () {
+var getCommentsData = function () {
   var commentsArray = [];
   var randomMessageCount = randomNumber(1, 2);
   for (var i = 0; i < randomMessageCount; i++) {
     var commentObj = {};
-    var randomMessage = randomNumber(0, commentData.length - 1);
-    commentObj.message = commentData[randomMessage];
+    var randomMessage = randomNumber(0, commentDataArray.length - 1);
+    commentObj.message = commentDataArray[randomMessage];
 
-    var nameIndex = randomNumber(0, nameData.length - 1);
-    commentObj.name = nameData[nameIndex];
+    var nameIndex = randomNumber(0, nameDataArray.length - 1);
+    commentObj.name = nameDataArray[nameIndex];
 
     var avatarIndex = randomNumber(1, 6);
     commentObj.avatar = 'img/avatar-' + avatarIndex + '.svg';
@@ -51,7 +51,7 @@ var getCommentData = function () {
   return commentsArray;
 };
 
-var getUserPhotoSlot = function (dataArray) {
+var getUserPhotoSlots = function (dataArray) {
   var userPhoto = pictureTemplate.cloneNode(true);
   userPhoto.querySelector('.picture__img').src = dataArray.url;
   userPhoto.querySelector('.picture__likes').textContent = dataArray.likes;
@@ -62,37 +62,37 @@ var getUserPhotoSlot = function (dataArray) {
 var runGenerationUsersPhoto = function (dataArray) {
   var fragment = document.createDocumentFragment();
   for (var i = 0; i < dataArray.length; i++) {
-    var userPhoto = getUserPhotoSlot(dataArray[i]);
+    var userPhoto = getUserPhotoSlots(dataArray[i]);
     fragment.appendChild(userPhoto);
   }
   return fragment;
 };
 
-var runGenerationBigPhoto = function (dataArray) {
-  bigPicture.querySelector('.big-picture__img').querySelector('img').src = dataArray.url;
+var runGenerationBigPhoto = function (objNumberFromDataArray) {
+  bigPicture.querySelector('.big-picture__img').querySelector('img').src = objNumberFromDataArray.url;
   bigPicture.querySelector('.social__caption').textContent = 'description';
-  bigPicture.querySelector('.likes-count').textContent = dataArray.likes;
-  bigPicture.querySelector('.comments-count').textContent = dataArray.comments.length;
+  bigPicture.querySelector('.likes-count').textContent = objNumberFromDataArray.likes;
+  bigPicture.querySelector('.comments-count').textContent = objNumberFromDataArray.comments.length;
 };
 
-var getCommentUnderBigPhoto = function (dataArrayElement, commentsArray) {
+var getCommentUnderBigPhoto = function (objNumberFromCommentsArray) {
   var userComment = socialComment.cloneNode(true);
-  userComment.querySelector('.social__picture').src = commentsArray.avatar;
-  userComment.querySelector('.social__text').textContent = commentsArray.message;
+  userComment.querySelector('.social__picture').src = objNumberFromCommentsArray.avatar;
+  userComment.querySelector('.social__text').textContent = objNumberFromCommentsArray.message;
   return userComment;
 };
 
-var runGenerationCommentBigPhoto = function (dataArray) {
+var runGenerationCommentBigPhoto = function () {
   var commentsArray = dataArray[0].comments;
   var fragment = document.createDocumentFragment();
   for (var i = 0; i < dataArray[0].comments.length; i++) {
-    var userComment = getCommentUnderBigPhoto(dataArray[0], commentsArray[i]);
+    var userComment = getCommentUnderBigPhoto(commentsArray[i]);
     fragment.appendChild(userComment);
   }
   return fragment;
 };
 
-var dataArray = getPhotoData();
+var dataArray = getPhotosData();
 picturesSection.appendChild(runGenerationUsersPhoto(dataArray));
 runGenerationBigPhoto(dataArray[0]);
-socialComments.appendChild(runGenerationCommentBigPhoto(dataArray));
+socialComments.appendChild(runGenerationCommentBigPhoto());
