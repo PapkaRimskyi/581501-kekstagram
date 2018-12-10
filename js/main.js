@@ -43,7 +43,7 @@ var randomNumber = function (min, max) {
 };
 //
 
-// Генерация массива данных о фото: лайки, комменты, путь к фото.
+// Генерация массива данных  фото, а так же массива объектов с инфой о комментах.
 var getPhotosData = function () {
   var dataArray = [];
   for (var i = 1; i <= 25; i++) {
@@ -58,10 +58,7 @@ var getPhotosData = function () {
   }
   return dataArray;
 };
-//
 
-// Генерация массива объектов с данными о комментариях: количество комментариев под фото, аватар, имя написавшего, текст комментария.
-// Потом эта функция запускается в функции getPhotosData. В итоге массив объектов(commentsArray) записывается в массив dataArray.
 var getCommentsData = function () {
   var commentsArray = [];
   var randomMessageCount = randomNumber(1, 2);
@@ -81,7 +78,7 @@ var getCommentsData = function () {
 };
 //
 
-// Ячейка под фотографию пользователя. Клоинурется нужная разметка, так же пишется путь к фото, сколько лайков и сколько комментов.
+// Ячейка под фотографию пользователя.
 var getUserPhotoSlot = function (photoData, idNumber) {
   var userPhoto = pictureTemplate.cloneNode(true);
   userPhoto.querySelector('.picture__img').src = photoData.url;
@@ -101,25 +98,21 @@ var runGenerationUsersPhoto = function (dataArray) {
 };
 //
 
-// Фотография в большом размере (открывается при клике на маленькую фотографию).
+// Функции по генерации большой фотографии и комментов к ней.
 var runGenerationBigPhoto = function (photoData) {
   bigPicture.querySelector('.big-picture__img').querySelector('img').src = photoData.url;
   bigPicture.querySelector('.social__caption').textContent = 'description';
   bigPicture.querySelector('.likes-count').textContent = photoData.likes;
   bigPicture.querySelector('.comments-count').textContent = photoData.comments.length;
 };
-//
 
-// Комментарии под фотографией.
 var getCommentForBigPhoto = function (commentData) {
   var userComment = socialComment.cloneNode(true);
   userComment.querySelector('.social__picture').src = commentData.avatar;
   userComment.querySelector('.social__text').textContent = commentData.message;
   return userComment;
 };
-//
 
-// Генерация комментариев под фото.
 var runGenerationCommentsBigPhoto = function (commentsBigPhoto) {
   var commentsArray = commentsBigPhoto.comments;
   var fragment = document.createDocumentFragment();
@@ -131,7 +124,7 @@ var runGenerationCommentsBigPhoto = function (commentsBigPhoto) {
 };
 //
 
-// Запись результата работы функции getPhotosData в переменную dataArray;
+// Получаем массив с данными.
 var dataArray = getPhotosData();
 //
 
@@ -139,8 +132,7 @@ var dataArray = getPhotosData();
 picturesSection.appendChild(runGenerationUsersPhoto(dataArray));
 //
 
-// Добавляем обработчик событий на фото пользователей. Если по ним кликнут, то откроется большая версия фото, с комментариями пользователей.
-
+// Отслеживание кликов через родительский элемент (делегирование)
 var addDelegationHandler = function (photoData) {
   picturesSection.onclick = function (evt) {
     var target = evt.target;
@@ -167,33 +159,27 @@ var ESC_KEYNUMBER = 27;
 var ENTER_KEYNUMBER = 13;
 //
 
-// Когда нужно сбросить классы элемента до дефолтного (в случае с эффектами на фото во время настройки фотографии), то эта переменная подставляется в imgUploadPreview.className
+// Переменная для сброса классов у фото в меню настроек.
 var imgUploadPreviewString = 'img-upload__preview';
 //
 
-// Закрытие фото пользователя. Добавление класса hidden для .big-picture. Удаление обработчика событий.
+// Закрытие фото пользователя.
 var closeUserPhoto = function () {
   bigPicture.classList.add('hidden');
   socialComments.innerHTML = '';
   document.removeEventListener('keydown', onEscPressUserPhoto);
 };
-//
 
-// Если фото открыто в полном размере и происходит нажатие на ESC, то срабатывает функция closeUserPhoto, что приводит к закрытию окна.
 var onEscPressUserPhoto = function (evt) {
   if (evt.keyCode === ESC_KEYNUMBER) {
     closeUserPhoto();
   }
 };
-//
 
-// Добавление обработчика на кнопку крестик в правом верхнем углу от фотографии. При клике выполняется функция closeUserPhoto.
 bigPictureCancel.addEventListener('click', function () {
   closeUserPhoto();
 });
-//
 
-// Добавление обработчика на кнопку крестик в правом верхнем углу от фотографии. Когда кнопка находится в фокусе и нажимается ENTER, то выполняется функция closeUserPhoto.
 bigPictureCancel.addEventListener('keydown', function (evt) {
   if (evt.keyCode === ENTER_KEYNUMBER) {
     closeUserPhoto();
@@ -206,6 +192,10 @@ var openPhotoSettings = function () {
   imgUploadOverlay.classList.remove('hidden');
   document.addEventListener('keydown', onEscPressSettings);
 };
+
+uploadFile.addEventListener('change', function () {
+  openPhotoSettings();
+});
 //
 
 // Функция закрытия настроек фотографии.
@@ -217,23 +207,13 @@ var closePhotoSettings = function () {
   imgUploadPreview.className = imgUploadPreviewString;
   document.removeEventListener('keydown', onEscPressSettings);
 };
-//
 
-// Если нажимается кнопка ESC при открытом окне настроек фотографий, то выполняется функция closePhotoSettings.
 var onEscPressSettings = function (evt) {
   if (evt.keyCode === ESC_KEYNUMBER) {
     closePhotoSettings();
   }
 };
-//
 
-// Добавляется обработчик событий на скрытый input. Если меняется значение поля выбора файла, то выполняется функция openPhotoSettings.
-uploadFile.addEventListener('change', function () {
-  openPhotoSettings();
-});
-//
-
-// Добавляется обработчик событий на крестик в правом верхнем углу настроек фото. Если происходит клик, то выполняется функция closePhotoSettingsю
 uploadCancel.addEventListener('click', function () {
   closePhotoSettings();
 });
@@ -245,32 +225,26 @@ var MIN_INPUT_VALUE = 25;
 var VALUE_STEP = 25;
 //
 
-// Добавляется обработчик событий на кнопку + . Если происходит нажатие, то в переменную scaleControlValue.value записывается значение функции findValue.
-// Потом запускается функция addTransformScale, которая добавляет CSS стиль transform: scale к фотографии.
+// Добавляется обработчик событий на кнопку +  и -.
 scaleControlBigger.addEventListener('click', function () {
-  scaleControlValue.value = findValue(MAX_INPUT_VALUE, 'plus') + '%';
+  scaleControlValue.value = findScaleValue('plus') + '%';
   addTransformScale(scaleControlValue.value);
 });
 
 scaleControlSmaller.addEventListener('click', function () {
-  scaleControlValue.value = findValue(MIN_INPUT_VALUE, 'minus') + '%';
+  scaleControlValue.value = findScaleValue('minus') + '%';
   addTransformScale(scaleControlValue.value);
 });
-//
 
-// Нахождения значения для поля scaleControlValue.value. Если функция передается с аргументом 'plus', то происходит сложение значения переменной stepValue и inputValue.
-// Если функция передается с аргументом 'minus', то происходит вычитание значения переменной stepValue и inputValue.
-var findValue = function (limitInputValue, button) {
-  var inputValue = parseInt(scaleControlValue.value, 10);
-  if (limitInputValue !== inputValue) {
-    if (button === 'plus') {
-      inputValue += VALUE_STEP;
-    }
-    if (button === 'minus') {
-      inputValue -= VALUE_STEP;
-    }
+var findScaleValue = function (symbol) {
+  var inputScaleValue = parseInt(scaleControlValue.value, 10);
+  if (inputScaleValue !== MAX_INPUT_VALUE && symbol === 'plus') {
+    inputScaleValue += VALUE_STEP;
   }
-  return inputValue;
+  if (inputScaleValue !== MIN_INPUT_VALUE && symbol === 'minus') {
+    inputScaleValue -= VALUE_STEP;
+  }
+  return inputScaleValue;
 };
 //
 
@@ -282,16 +256,14 @@ var addTransformScale = function (valueScale) {
 };
 //
 
-// Добавление обработчика событий на эффекты в окне настройки фотографии. Если происходит клик на каком то эффекте, то все классы эффектов скидываются и применяется нужный.
+// Добавление обработчика событий на эффекты в окне настройки фотографии.
 var addEffectsCollectionClickHandler = function (radioButton, effect) {
   radioButton.addEventListener('click', function () {
     imgUploadPreview.className = imgUploadPreviewString;
     imgUploadPreview.classList.add(effectsClass + effect);
   });
 };
-//
 
-// Показ эффекта.
 var showEffect = function () {
   for (var i = 0; i < radioCollection.length; i++) {
     addEffectsCollectionClickHandler(radioCollection[i], effectsModifier[i]);
@@ -300,24 +272,3 @@ var showEffect = function () {
 
 showEffect();
 //
-
-// var addUserPictureClickHandler = function (userPicture, photoData) {
-//   userPicture.addEventListener('click', generationUserPictureAndComments(photoData));
-// };
-//
-// var generationUserPictureAndComments = function (photoData) {
-//   return function () {
-//     runGenerationBigPhoto(photoData);
-//     socialComments.appendChild(runGenerationCommentsBigPhoto(photoData));
-//     bigPicture.classList.remove('hidden');
-//     document.addEventListener('keydown', onEscPressUserPhoto);
-//   };
-// };
-//
-// var showBigUserPhoto = function () {
-//   for (var i = 0; i < userPictureCollectionArray.length; i++) {
-//     addUserPictureClickHandler(userPictureCollectionArray[i], dataArray[i]);
-//   }
-// };
-//
-// showBigUserPhoto();
