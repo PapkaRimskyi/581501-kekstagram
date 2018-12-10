@@ -82,9 +82,10 @@ var getCommentsData = function () {
 //
 
 // Ячейка под фотографию пользователя. Клоинурется нужная разметка, так же пишется путь к фото, сколько лайков и сколько комментов.
-var getUserPhotoSlot = function (photoData) {
+var getUserPhotoSlot = function (photoData, idNumber) {
   var userPhoto = pictureTemplate.cloneNode(true);
   userPhoto.querySelector('.picture__img').src = photoData.url;
+  userPhoto.querySelector('.picture__img').setAttribute('data-id', idNumber);
   userPhoto.querySelector('.picture__likes').textContent = photoData.likes;
   userPhoto.querySelector('.picture__comments').textContent = photoData.comments.length;
   return userPhoto;
@@ -93,7 +94,7 @@ var getUserPhotoSlot = function (photoData) {
 var runGenerationUsersPhoto = function (dataArray) {
   var fragment = document.createDocumentFragment();
   for (var i = 0; i < dataArray.length; i++) {
-    var userPhoto = getUserPhotoSlot(dataArray[i]);
+    var userPhoto = getUserPhotoSlot(dataArray[i], i);
     fragment.appendChild(userPhoto);
   }
   return fragment;
@@ -138,35 +139,27 @@ var dataArray = getPhotosData();
 picturesSection.appendChild(runGenerationUsersPhoto(dataArray));
 //
 
-// Нахождение всех фото пользователей на странице. В итоге получается псевдомассив (NodeList).
-var userPictureCollection = document.querySelectorAll('.picture__img');
-//
-
-// Переводим userPictureCollection в массив.
-var userPictureCollectionArray = Array.prototype.slice.call(userPictureCollection);
-//
-
 // Добавляем обработчик событий на фото пользователей. Если по ним кликнут, то откроется большая версия фото, с комментариями пользователей.
-var addUserPictureClickHandler = function (userPicture, photoData) {
-  userPicture.addEventListener('click', generationUserPictureAndComments(photoData));
-};
 
-var generationUserPictureAndComments = function (photoData) {
-  return function () {
-    runGenerationBigPhoto(photoData);
-    socialComments.appendChild(runGenerationCommentsBigPhoto(photoData));
-    bigPicture.classList.remove('hidden');
-    document.addEventListener('keydown', onEscPressUserPhoto);
+var addDelegationHandler = function (photoData) {
+  picturesSection.onclick = function (evt) {
+    var target = evt.target;
+    if (target.className === 'picture__img') {
+      var targetID = target.getAttribute('data-id');
+      generationUserPictureAndComments(photoData[targetID]);
+    }
   };
 };
 
-var showBigUserPhoto = function () {
-  for (var i = 0; i < userPictureCollectionArray.length; i++) {
-    addUserPictureClickHandler(userPictureCollectionArray[i], dataArray[i]);
-  }
+var generationUserPictureAndComments = function (photoDataID) {
+  runGenerationBigPhoto(photoDataID);
+  socialComments.innerHTML = '';
+  socialComments.appendChild(runGenerationCommentsBigPhoto(photoDataID));
+  bigPicture.classList.remove('hidden');
+  document.addEventListener('keydown', onEscPressUserPhoto);
 };
 
-showBigUserPhoto();
+addDelegationHandler(dataArray);
 //
 
 // Константы для номера(keyCode) клавиши ESC и ENTER.
@@ -307,3 +300,24 @@ var showEffect = function () {
 
 showEffect();
 //
+
+// var addUserPictureClickHandler = function (userPicture, photoData) {
+//   userPicture.addEventListener('click', generationUserPictureAndComments(photoData));
+// };
+//
+// var generationUserPictureAndComments = function (photoData) {
+//   return function () {
+//     runGenerationBigPhoto(photoData);
+//     socialComments.appendChild(runGenerationCommentsBigPhoto(photoData));
+//     bigPicture.classList.remove('hidden');
+//     document.addEventListener('keydown', onEscPressUserPhoto);
+//   };
+// };
+//
+// var showBigUserPhoto = function () {
+//   for (var i = 0; i < userPictureCollectionArray.length; i++) {
+//     addUserPictureClickHandler(userPictureCollectionArray[i], dataArray[i]);
+//   }
+// };
+//
+// showBigUserPhoto();
