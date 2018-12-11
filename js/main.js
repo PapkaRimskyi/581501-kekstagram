@@ -213,7 +213,6 @@ var closePhotoSettings = function () {
 
 var resetPhotoSettgins = function () {
   uploadFile.value = '';
-  addTransformScale(scaleControlValue.value);
   imgUploadImage.style.removeProperty('transform');
   imgUploadPreview.className = imgUploadPreviewString;
   imgUploadForm.reset();
