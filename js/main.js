@@ -135,14 +135,14 @@ picturesSection.appendChild(runGenerationUsersPhoto(dataArray));
 
 // Отслеживание кликов через родительский элемент (делегирование)
 var addDelegationHandler = function (photoData) {
-  picturesSection.onclick = function (evt) {
+  picturesSection.addEventListener('click', function (evt) {
     var target = evt.target;
     if (target.className === 'picture__img') {
       var targetId = target.getAttribute('data-id');
       generationUserPictureAndComments(photoData[targetId]);
       showBigPicture();
     }
-  };
+  });
 };
 
 var generationUserPictureAndComments = function (photoDataID) {
