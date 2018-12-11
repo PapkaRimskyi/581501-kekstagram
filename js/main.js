@@ -31,7 +31,7 @@ var nameDataArray = ['Александр', 'Петр', 'Василиса', 'Ди
 //
 
 // Переменная используется для создания модификатора к фото (во время прокликивания по эффектам в меню настроек фотографии). Происходи конкатенация этой переменной и массива, из которого достается нужный модификатор.
-var effectsClass = 'effects__preview--';
+var effectsClass = 'effects__preview';
 //
 
 // Массив с эффектами на фото.
@@ -140,18 +140,18 @@ var addDelegationHandler = function (photoData) {
     if (target.className === 'picture__img') {
       var targetId = target.getAttribute('data-id');
       generationUserPictureAndComments(photoData[targetId]);
-      showBigPicture();
+      openUserPhoto();
     }
   });
 };
 
-var generationUserPictureAndComments = function (photoDataID) {
-  runGenerationBigPhoto(photoDataID);
+var generationUserPictureAndComments = function (photoDataId) {
+  runGenerationBigPhoto(photoDataId);
   socialComments.innerHTML = '';
-  socialComments.appendChild(runGenerationCommentsBigPhoto(photoDataID));
+  socialComments.appendChild(runGenerationCommentsBigPhoto(photoDataId));
 };
 
-var showBigPicture = function () {
+var openUserPhoto = function () {
   bigPicture.classList.remove('hidden');
   document.addEventListener('keydown', onEscPressUserPhoto);
 };
@@ -195,6 +195,7 @@ bigPictureCancel.addEventListener('keydown', function (evt) {
 // Функция открытия настроек загруженной фотографии.
 var openPhotoSettings = function () {
   imgUploadOverlay.classList.remove('hidden');
+  imgUploadPreview.classList.add(effectsClass + '--' + effectsModifier[0]);
   document.addEventListener('keydown', onEscPressSettings);
 };
 
@@ -207,6 +208,7 @@ uploadFile.addEventListener('change', function () {
 var closePhotoSettings = function () {
   imgUploadOverlay.classList.add('hidden');
   resetPhotoSettgins();
+  document.removeEventListener('keydown', onEscPressSettings);
 };
 
 var resetPhotoSettgins = function () {
@@ -214,7 +216,6 @@ var resetPhotoSettgins = function () {
   addTransformScale(scaleControlValue.value);
   imgUploadImage.style.removeProperty('transform');
   imgUploadPreview.className = imgUploadPreviewString;
-  document.removeEventListener('keydown', onEscPressSettings);
   imgUploadForm.reset();
 };
 
@@ -237,13 +238,15 @@ var VALUE_STEP = 25;
 
 // Добавляется обработчик событий на кнопку +  и -.
 scaleControlBigger.addEventListener('click', function () {
-  addTransformScale(findScaleValue('plus'));
-  scaleControlValue.value = findScaleValue('plus') + '%';
+  var foundScaleValue = findScaleValue('plus');
+  addTransformScale(foundScaleValue);
+  scaleControlValue.value = foundScaleValue + '%';
 });
 
 scaleControlSmaller.addEventListener('click', function () {
-  addTransformScale(findScaleValue('minus'));
-  scaleControlValue.value = findScaleValue('minus') + '%';
+  var foundScaleValue = findScaleValue('minus');
+  addTransformScale(foundScaleValue);
+  scaleControlValue.value = foundScaleValue + '%';
 });
 
 var findScaleValue = function (symbol) {
@@ -270,7 +273,7 @@ var addTransformScale = function (valueScale) {
 var addEffectsCollectionClickHandler = function (radioButton, effect) {
   radioButton.addEventListener('click', function () {
     imgUploadPreview.className = imgUploadPreviewString;
-    imgUploadPreview.classList.add(effectsClass + effect);
+    imgUploadPreview.classList.add(effectsClass + '--' + effect);
   });
 };
 
