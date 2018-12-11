@@ -16,6 +16,7 @@ var scaleControlBigger = document.querySelector('.scale__control--bigger');
 var scaleControlValue = document.querySelector('.scale__control--value');
 var imgUploadPreview = document.querySelector('.img-upload__preview');
 var imgUploadImage = imgUploadPreview.querySelector('.img-upload__image');
+var imgUploadForm = document.querySelector('.img-upload__form');
 var radioCollection = document.querySelectorAll('.effects__radio');
 
 socialCommentCount.classList.add('visually-hidden');
@@ -30,11 +31,11 @@ var nameDataArray = ['Александр', 'Петр', 'Василиса', 'Ди
 //
 
 // Переменная используется для создания модификатора к фото (во время прокликивания по эффектам в меню настроек фотографии). Происходи конкатенация этой переменной и массива, из которого достается нужный модификатор.
-var effectsClass = 'effects__preview';
+var effectsClass = 'effects__preview--';
 //
 
 // Массив с эффектами на фото.
-var effectsModifier = ['--none', '--chrome', '--sepia', '--marvin', '--phobos', '--heat'];
+var effectsModifier = ['none', 'chrome', 'sepia', 'marvin', 'phobos', 'heat'];
 //
 
 // Функция рандома чисел
@@ -137,8 +138,9 @@ var addDelegationHandler = function (photoData) {
   picturesSection.onclick = function (evt) {
     var target = evt.target;
     if (target.className === 'picture__img') {
-      var targetID = target.getAttribute('data-id');
-      generationUserPictureAndComments(photoData[targetID]);
+      var targetId = target.getAttribute('data-id');
+      generationUserPictureAndComments(photoData[targetId]);
+      showBigPicture();
     }
   };
 };
@@ -147,6 +149,9 @@ var generationUserPictureAndComments = function (photoDataID) {
   runGenerationBigPhoto(photoDataID);
   socialComments.innerHTML = '';
   socialComments.appendChild(runGenerationCommentsBigPhoto(photoDataID));
+};
+
+var showBigPicture = function () {
   bigPicture.classList.remove('hidden');
   document.addEventListener('keydown', onEscPressUserPhoto);
 };
@@ -201,11 +206,16 @@ uploadFile.addEventListener('change', function () {
 // Функция закрытия настроек фотографии.
 var closePhotoSettings = function () {
   imgUploadOverlay.classList.add('hidden');
+  resetPhotoSettgins();
+};
+
+var resetPhotoSettgins = function () {
   uploadFile.value = '';
-  scaleControlValue.value = MAX_INPUT_VALUE + '%';
   addTransformScale(scaleControlValue.value);
+  imgUploadImage.style.removeProperty('transform');
   imgUploadPreview.className = imgUploadPreviewString;
   document.removeEventListener('keydown', onEscPressSettings);
+  imgUploadForm.reset();
 };
 
 var onEscPressSettings = function (evt) {
@@ -227,13 +237,13 @@ var VALUE_STEP = 25;
 
 // Добавляется обработчик событий на кнопку +  и -.
 scaleControlBigger.addEventListener('click', function () {
+  addTransformScale(findScaleValue('plus'));
   scaleControlValue.value = findScaleValue('plus') + '%';
-  addTransformScale(scaleControlValue.value);
 });
 
 scaleControlSmaller.addEventListener('click', function () {
+  addTransformScale(findScaleValue('minus'));
   scaleControlValue.value = findScaleValue('minus') + '%';
-  addTransformScale(scaleControlValue.value);
 });
 
 var findScaleValue = function (symbol) {
@@ -251,7 +261,7 @@ var findScaleValue = function (symbol) {
 // Добавление CSS свойства transform: scale картинке пользователя. Зависит от настоящего значения scaleControlValue.value.
 // Если значение scaleControlValue.value = 50%, то transform: scale(0.5);
 var addTransformScale = function (valueScale) {
-  var scaleValue = parseInt(valueScale, 10) / 100;
+  var scaleValue = valueScale / 100;
   imgUploadImage.style.transform = 'scale(' + scaleValue + ')';
 };
 //
