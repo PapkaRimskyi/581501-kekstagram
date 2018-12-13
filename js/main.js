@@ -288,29 +288,31 @@ var showEffect = function () {
 showEffect();
 //
 
-textHashtags.addEventListener('focusout', function () {
+textHashtags.addEventListener('change', function () {
   hashTagsChecks();
 });
 
 var getHashTagsList = function () {
-  var inputValue = textHashtags.value;
-  inputValue = inputValue.toUpperCase();
+  var inputValue = textHashtags.value.toUpperCase();
   var hashTags = inputValue.split(' ');
   return hashTags;
 };
 
-var checkRepeatedWords = function (words) {
+var hasCheckRepeatedWords = function (words) {
   if (words.length !== 0) {
     for (var i = 0; i < words.length; i++) {
       for (var j = i + 1; j < words.length; j++) {
         if (words[i] === words[j]) {
-          return -1;
+          return false;
         }
       }
     }
   }
-  return 0;
+  return true;
 };
+
+var MAX_HASHTAG_SYMBOLS = 20;
+var COUNT_OF_MAX_HASHTAGS = 5;
 
 var hashTagsChecks = function () {
   var hashTagsArray = getHashTagsList();
@@ -322,16 +324,16 @@ var hashTagsChecks = function () {
     } else if (hashTagsArray[i].lastIndexOf('#') !== 0) {
       textHashtags.setCustomValidity('Хэштеги не разделены пробелами или присутствует два символа # подряд');
       break;
-    } else if (hashTagsArray[i].length === 1 && hashTagsArray[i] === '#') {
+    } else if (hashTagsArray[i].length === 1) {
       textHashtags.setCustomValidity('Хэштег не может состоять только из одной #');
       break;
-    } else if (hashTagsArray[i].length >= 20) {
+    } else if (hashTagsArray[i].length > MAX_HASHTAG_SYMBOLS) {
       textHashtags.setCustomValidity('Хэштег должен содержать не более 20 символов (включая #)');
       break;
-    } else if (hashTagsArray.length >= 5) {
+    } else if (hashTagsArray.length > COUNT_OF_MAX_HASHTAGS) {
       textHashtags.setCustomValidity('Количество ХэшТегов не должно превышать 5');
       break;
-    } else if (checkRepeatedWords(hashTagsArray) === -1) {
+    } else if (hasCheckRepeatedWords(hashTagsArray) === false) {
       textHashtags.setCustomValidity('Нельзя писать повторные хэштеги');
       break;
     } else {
