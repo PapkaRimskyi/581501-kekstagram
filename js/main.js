@@ -299,12 +299,13 @@ var getHashTagsList = function () {
 };
 
 var hasCheckRepeatedWords = function (words) {
-  if (words.length !== 0) {
-    for (var i = 0; i < words.length; i++) {
-      for (var j = i + 1; j < words.length; j++) {
-        if (words[i] === words[j]) {
-          return false;
-        }
+  if (words.length === 0) {
+    return false;
+  }
+  for (var i = 0; i < words.length; i++) {
+    for (var j = i + 1; j < words.length; j++) {
+      if (words[i] === words[j]) {
+        return false;
       }
     }
   }
