@@ -298,18 +298,18 @@ var getHashTagsList = function () {
   return hashTags;
 };
 
-var hasCheckRepeatedWords = function (words) {
+var hasRepeatedWords = function (words) {
   if (words.length === 0) {
-    return false;
+    return true;
   }
   for (var i = 0; i < words.length; i++) {
     for (var j = i + 1; j < words.length; j++) {
       if (words[i] === words[j]) {
-        return false;
+        return true;
       }
     }
   }
-  return true;
+  return false;
 };
 
 var MAX_HASHTAG_SYMBOLS = 20;
@@ -334,7 +334,7 @@ var hashTagsChecks = function () {
     } else if (hashTagsArray.length > COUNT_OF_MAX_HASHTAGS) {
       textHashtags.setCustomValidity('Количество ХэшТегов не должно превышать 5');
       break;
-    } else if (hasCheckRepeatedWords(hashTagsArray) === false) {
+    } else if (hasRepeatedWords(hashTagsArray)) {
       textHashtags.setCustomValidity('Нельзя писать повторные хэштеги');
       break;
     } else {
