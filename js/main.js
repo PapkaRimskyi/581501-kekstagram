@@ -18,6 +18,8 @@ var imgUploadPreview = document.querySelector('.img-upload__preview');
 var imgUploadImage = imgUploadPreview.querySelector('.img-upload__image');
 var imgUploadForm = document.querySelector('.img-upload__form');
 var radioCollection = document.querySelectorAll('.effects__radio');
+var textHashtags = document.querySelector('.text__hashtags');
+var textDescription = document.querySelector('.text__description');
 
 socialCommentCount.classList.add('visually-hidden');
 commentsLoader.classList.add('visually-hidden');
@@ -219,7 +221,8 @@ var resetPhotoSettgins = function () {
 };
 
 var onEscPressSettings = function (evt) {
-  if (evt.keyCode === ESC_KEYNUMBER) {
+  var activeElement = document.activeElement;
+  if (evt.keyCode === ESC_KEYNUMBER && activeElement !== textHashtags && activeElement !== textDescription) {
     closePhotoSettings();
   }
 };
@@ -284,3 +287,55 @@ var showEffect = function () {
 
 showEffect();
 //
+
+textHashtags.addEventListener('change', function () {
+  hashTagsChecks();
+});
+
+var getHashTagsList = function () {
+  var inputValue = textHashtags.value.toUpperCase();
+  var hashTags = inputValue.split(' ');
+  return hashTags;
+};
+
+var hasRepeatedWords = function (words) {
+  for (var i = 0; i < words.length; i++) {
+    for (var j = i + 1; j < words.length; j++) {
+      if (words[i] === words[j]) {
+        return true;
+      }
+    }
+  }
+  return false;
+};
+
+var MAX_HASHTAG_SYMBOLS = 20;
+var COUNT_OF_MAX_HASHTAGS = 5;
+
+var hashTagsChecks = function () {
+  var hashTagsArray = getHashTagsList();
+  for (var i = 0; i < hashTagsArray.length; i++) {
+    var indexSymbol = hashTagsArray[i].indexOf('#');
+    if (indexSymbol !== 0) {
+      textHashtags.setCustomValidity('Хэштег должен начинаться с символа #');
+      break;
+    } else if (hashTagsArray[i].lastIndexOf('#') !== 0) {
+      textHashtags.setCustomValidity('Хэштеги не разделены пробелами или присутствует два символа # подряд');
+      break;
+    } else if (hashTagsArray[i].length === 1) {
+      textHashtags.setCustomValidity('Хэштег не может состоять только из одной #');
+      break;
+    } else if (hashTagsArray[i].length > MAX_HASHTAG_SYMBOLS) {
+      textHashtags.setCustomValidity('Хэштег должен содержать не более 20 символов (включая #)');
+      break;
+    } else if (hashTagsArray.length > COUNT_OF_MAX_HASHTAGS) {
+      textHashtags.setCustomValidity('Количество ХэшТегов не должно превышать 5');
+      break;
+    } else if (hasRepeatedWords(hashTagsArray)) {
+      textHashtags.setCustomValidity('Нельзя писать повторные хэштеги');
+      break;
+    } else {
+      textHashtags.setCustomValidity('');
+    }
+  }
+};
