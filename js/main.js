@@ -20,6 +20,11 @@ var imgUploadForm = document.querySelector('.img-upload__form');
 var radioCollection = document.querySelectorAll('.effects__radio');
 var textHashtags = document.querySelector('.text__hashtags');
 var textDescription = document.querySelector('.text__description');
+var imgUploadEffectLevel = document.querySelector('.img-upload__effect-level');
+var effectLevelLine = document.querySelector('.effect-level__line');
+var effectLevelPin = effectLevelLine.querySelector('.effect-level__pin');
+var effectLevelDepth = effectLevelLine.querySelector('.effect-level__depth');
+var effectLevelValue = document.querySelector('.effect-level__value');
 
 socialCommentCount.classList.add('visually-hidden');
 commentsLoader.classList.add('visually-hidden');
@@ -198,6 +203,7 @@ bigPictureCancel.addEventListener('keydown', function (evt) {
 var openPhotoSettings = function () {
   imgUploadOverlay.classList.remove('hidden');
   imgUploadPreview.classList.add(effectsClass + '--' + effectsModifier[0]);
+  imgUploadEffectLevel.classList.add('hidden');
   document.addEventListener('keydown', onEscPressSettings);
 };
 
@@ -217,6 +223,7 @@ var resetPhotoSettgins = function () {
   uploadFile.value = '';
   imgUploadImage.style.removeProperty('transform');
   imgUploadPreview.className = imgUploadPreviewString;
+  imgUploadPreview.style = '';
   imgUploadForm.reset();
 };
 
@@ -271,12 +278,31 @@ var addTransformScale = function (valueScale) {
 };
 //
 
+var classEffect;
+var documentClassEffectForStyleFilter;
+var MAX_PX_LEVEL_LINE = 453;
+
 // Добавление обработчика событий на эффекты в окне настройки фотографии.
 var addEffectsCollectionClickHandler = function (radioButton, effect) {
   radioButton.addEventListener('click', function () {
     imgUploadPreview.className = imgUploadPreviewString;
     imgUploadPreview.classList.add(effectsClass + '--' + effect);
+    removeOptionsToDefault(effect);
   });
+};
+
+var removeOptionsToDefault = function (effect) {
+  effectLevelPin.style.left = MAX_PX_LEVEL_LINE + 'px';
+  classEffect = '.' + effectsClass + '--' + effect;
+  documentClassEffectForStyleFilter = document.querySelector(classEffect);
+  documentClassEffectForStyleFilter.style.filter = '';
+  effectLevelDepth.style.width = MAX_INPUT_VALUE + '%';
+  effectLevelValue.value = MAX_INPUT_VALUE;
+  if (!imgUploadPreview.classList.contains('effects__preview--none')) {
+    imgUploadEffectLevel.classList.remove('hidden');
+  } else {
+    imgUploadEffectLevel.classList.add('hidden');
+  }
 };
 
 var showEffect = function () {
@@ -339,3 +365,58 @@ var hashTagsChecks = function () {
     }
   }
 };
+
+(function () {
+  var defaultCoords;
+  var defaultWidthDepth;
+  var MIN_PX_LEVEL_LINE = 0;
+  var PIX_IN_ONE_STEP = MAX_PX_LEVEL_LINE / 100;
+
+  effectLevelPin.addEventListener('mousedown', function (evt) {
+    evt.preventDefault();
+    defaultCoords = {x: evt.clientX};
+    defaultWidthDepth = effectLevelDepth.offsetWidth;
+
+    document.addEventListener('mousemove', mouseMove);
+    document.addEventListener('mouseup', mouseUp);
+  });
+
+  var mouseMove = function (evtMove) {
+    evtMove.preventDefault();
+    findPinLocationAndEffectLine(evtMove);
+  };
+
+  var mouseUp = function (evtUp) {
+    evtUp.preventDefault();
+    findPinLocationAndEffectLine(evtUp);
+    document.removeEventListener('mousemove', mouseMove);
+    document.removeEventListener('mouseup', mouseUp);
+  };
+
+  var findPinLocationAndEffectLine = function (evtMove) {
+    var shift = {x: defaultCoords.x - evtMove.clientX};
+    defaultCoords = {x: evtMove.clientX};
+    var effectLevelPinLeft = (effectLevelPin.offsetLeft - shift.x);
+    if (MIN_PX_LEVEL_LINE <= effectLevelPinLeft && effectLevelPinLeft <= MAX_PX_LEVEL_LINE) {
+      effectLevelPin.style.left = effectLevelPinLeft + 'px';
+      defaultWidthDepth = effectLevelPinLeft;
+      effectLevelDepth.style.width = ((defaultWidthDepth * 100) / MAX_PX_LEVEL_LINE) + '%';
+      effectLevelValue.value = Math.round(effectLevelPinLeft / PIX_IN_ONE_STEP);
+      changeEffect();
+    }
+  };
+
+  var changeEffect = function () {
+    if (imgUploadPreview.classList.contains('effects__preview--chrome')) {
+      documentClassEffectForStyleFilter.style.filter = 'grayscale(' + (effectLevelValue.value / MAX_INPUT_VALUE) + ')';
+    } else if (imgUploadPreview.classList.contains('effects__preview--sepia')) {
+      documentClassEffectForStyleFilter.style.filter = 'sepia(' + (effectLevelValue.value / MAX_INPUT_VALUE) + ')';
+    } else if (imgUploadPreview.classList.contains('effects__preview--marvin')) {
+      documentClassEffectForStyleFilter.style.filter = 'invert(' + effectLevelValue.value + '%)';
+    } else if (imgUploadPreview.classList.contains('effects__preview--phobos')) {
+      documentClassEffectForStyleFilter.style.filter = 'blur(' + (effectLevelValue.value / 20) + 'px)';
+    } else if (imgUploadPreview.classList.contains('effects__preview--heat')) {
+      documentClassEffectForStyleFilter.style.filter = 'brightness(' + Math.round(effectLevelValue.value / 33) + ')';
+    }
+  };
+})();
