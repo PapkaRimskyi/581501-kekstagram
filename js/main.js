@@ -416,7 +416,7 @@ var hashTagsChecks = function () {
     } else if (imgUploadPreview.classList.contains('effects__preview--phobos')) {
       documentClassEffectForStyleFilter.style.filter = 'blur(' + (effectLevelValue.value / 20) + 'px)';
     } else if (imgUploadPreview.classList.contains('effects__preview--heat')) {
-      documentClassEffectForStyleFilter.style.filter = 'brightness(' + Math.round(effectLevelValue.value / 33) + ')';
+      documentClassEffectForStyleFilter.style.filter = 'brightness(' + Math.round(effectLevelValue.value / 50 + 1) + ')';
     }
   };
 })();
