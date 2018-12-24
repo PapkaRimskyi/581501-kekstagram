@@ -257,16 +257,16 @@ var addEffectsCollectionClickHandler = function (radioButton, effect) {
 };
 
 var removeOptionsToDefault = function (effect) {
-  effectLevelPin.style.left = MAX_PX_LEVEL_LINE + 'px';
   classEffect = '.' + effectsClass + '--' + effect;
   documentClassEffectForStyleFilter = document.querySelector(classEffect);
   documentClassEffectForStyleFilter.style.filter = '';
-  effectLevelDepth.style.width = MAX_INPUT_VALUE + '%';
-  effectLevelValue.value = MAX_INPUT_VALUE;
-  if (!imgUploadPreview.classList.contains('effects__preview--none')) {
-    imgUploadEffectLevel.classList.remove('hidden');
-  } else {
+  if (imgUploadPreview.classList.contains('effects__preview--none')) {
     imgUploadEffectLevel.classList.add('hidden');
+  } else {
+    effectLevelPin.style.left = MAX_PX_LEVEL_LINE + 'px';
+    effectLevelDepth.style.width = MAX_INPUT_VALUE + '%';
+    effectLevelValue.value = MAX_INPUT_VALUE;
+    imgUploadEffectLevel.classList.remove('hidden');
   }
 };
 
@@ -366,21 +366,43 @@ var hashTagsChecks = function () {
       defaultWidthDepth = effectLevelPinLeft;
       effectLevelDepth.style.width = ((defaultWidthDepth * 100) / MAX_PX_LEVEL_LINE) + '%';
       effectLevelValue.value = Math.round(effectLevelPinLeft / PIX_IN_ONE_STEP);
-      changeEffect();
+      checkImgUploadPreviewContains();
     }
   };
 
-  var changeEffect = function () {
+  var effectValueArray = [
+    {name: 'grayscaleValue', valueMin: 0, valueMax: 1},
+    {name: 'sepiaValue', valueMin: 0, valueMax: 1},
+    {name: 'invertValue', valueMin: 0, valueMax: 100 + '%'},
+    {name: 'blurValue', valueMin: 0, valueMax: 3 + 'px'},
+    {name: 'brightnessValue', valueMin: 1, valueMax: 3},
+  ];
+
+  var testFunction = function (valueArrayMin, valueArrayMax) {
+    var filterValue;
+    if (valueArrayMin === 0 && valueArrayMax === 1) {
+      filterValue = effectLevelValue.value / MAX_INPUT_VALUE;
+    } else if (valueArrayMin === 0 && valueArrayMax === 100 + '%') {
+      filterValue = effectLevelValue.value + '%';
+    } else if (valueArrayMin === 0 && valueArrayMax === 3 + 'px') {
+      filterValue = effectLevelValue.value / 33.3333 + 'px';
+    } else if (valueArrayMin === 1 && valueArrayMax === 3) {
+      filterValue = effectLevelValue.value / 50 + 1;
+    }
+    return filterValue;
+  };
+
+  var checkImgUploadPreviewContains = function () {
     if (imgUploadPreview.classList.contains('effects__preview--chrome')) {
-      documentClassEffectForStyleFilter.style.filter = 'grayscale(' + (effectLevelValue.value / MAX_INPUT_VALUE) + ')';
+      documentClassEffectForStyleFilter.style.filter = 'grayscale(' + testFunction(effectValueArray[0].valueMin, effectValueArray[0].valueMax) + ')';
     } else if (imgUploadPreview.classList.contains('effects__preview--sepia')) {
-      documentClassEffectForStyleFilter.style.filter = 'sepia(' + (effectLevelValue.value / MAX_INPUT_VALUE) + ')';
+      documentClassEffectForStyleFilter.style.filter = 'sepia(' + testFunction(effectValueArray[1].valueMin, effectValueArray[1].valueMax) + ')';
     } else if (imgUploadPreview.classList.contains('effects__preview--marvin')) {
-      documentClassEffectForStyleFilter.style.filter = 'invert(' + effectLevelValue.value + '%)';
+      documentClassEffectForStyleFilter.style.filter = 'invert(' + testFunction(effectValueArray[2].valueMin, effectValueArray[2].valueMax) + ')';
     } else if (imgUploadPreview.classList.contains('effects__preview--phobos')) {
-      documentClassEffectForStyleFilter.style.filter = 'blur(' + Math.round(effectLevelValue.value / 33) + 'px)';
+      documentClassEffectForStyleFilter.style.filter = 'blur(' + testFunction(effectValueArray[3].valueMin, effectValueArray[3].valueMax) + ')';
     } else if (imgUploadPreview.classList.contains('effects__preview--heat')) {
-      documentClassEffectForStyleFilter.style.filter = 'brightness(' + Math.round(effectLevelValue.value / 50 + 1) + ')';
+      documentClassEffectForStyleFilter.style.filter = 'brightness(' + testFunction(effectValueArray[4].valueMin, effectValueArray[4].valueMax) + ')';
     }
   };
 })();
