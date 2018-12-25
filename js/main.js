@@ -371,38 +371,35 @@ var hashTagsChecks = function () {
   };
 
   var effectValueArray = [
-    {name: 'grayscaleValue', valueMin: 0, valueMax: 1},
-    {name: 'sepiaValue', valueMin: 0, valueMax: 1},
-    {name: 'invertValue', valueMin: 0, valueMax: 100 + '%'},
-    {name: 'blurValue', valueMin: 0, valueMax: 3 + 'px'},
-    {name: 'brightnessValue', valueMin: 1, valueMax: 3},
+    {name: 'effects__preview--chrome', valueMin: 0, valueMax: 1},
+    {name: 'effects__preview--sepia', valueMin: 0, valueMax: 1},
+    {name: 'effects__preview--marvin', valueMin: 0, valueMax: 1},
+    {name: 'effects__preview--phobos', valueMin: 0, valueMax: 3},
+    {name: 'effects__preview--heat', valueMin: 1, valueMax: 3},
   ];
 
-  var testFunction = function (valueArrayMin, valueArrayMax) {
+  var getFilterValue = function (actualFilterValue, minPinValue, maxPinValue) {
     var filterValue;
-    if (valueArrayMin === 0 && valueArrayMax === 1) {
-      filterValue = effectLevelValue.value / MAX_INPUT_VALUE;
-    } else if (valueArrayMin === 0 && valueArrayMax === 100 + '%') {
-      filterValue = effectLevelValue.value + '%';
-    } else if (valueArrayMin === 0 && valueArrayMax === 3 + 'px') {
-      filterValue = effectLevelValue.value / 33.3333 + 'px';
-    } else if (valueArrayMin === 1 && valueArrayMax === 3) {
-      filterValue = effectLevelValue.value / 50 + 1;
+    actualFilterValue = actualFilterValue / MAX_INPUT_VALUE;
+    if (minPinValue === 0) {
+      filterValue = (actualFilterValue * maxPinValue);
+    } else {
+      filterValue = (maxPinValue - minPinValue) * actualFilterValue + minPinValue;
     }
     return filterValue;
   };
 
   var checkImgUploadPreviewContains = function () {
-    if (imgUploadPreview.classList.contains('effects__preview--chrome')) {
-      documentClassEffectForStyleFilter.style.filter = 'grayscale(' + testFunction(effectValueArray[0].valueMin, effectValueArray[0].valueMax) + ')';
-    } else if (imgUploadPreview.classList.contains('effects__preview--sepia')) {
-      documentClassEffectForStyleFilter.style.filter = 'sepia(' + testFunction(effectValueArray[1].valueMin, effectValueArray[1].valueMax) + ')';
-    } else if (imgUploadPreview.classList.contains('effects__preview--marvin')) {
-      documentClassEffectForStyleFilter.style.filter = 'invert(' + testFunction(effectValueArray[2].valueMin, effectValueArray[2].valueMax) + ')';
-    } else if (imgUploadPreview.classList.contains('effects__preview--phobos')) {
-      documentClassEffectForStyleFilter.style.filter = 'blur(' + testFunction(effectValueArray[3].valueMin, effectValueArray[3].valueMax) + ')';
-    } else if (imgUploadPreview.classList.contains('effects__preview--heat')) {
-      documentClassEffectForStyleFilter.style.filter = 'brightness(' + testFunction(effectValueArray[4].valueMin, effectValueArray[4].valueMax) + ')';
+    if (imgUploadPreview.classList.contains(effectValueArray[0].name)) {
+      documentClassEffectForStyleFilter.style.filter = 'grayscale(' + getFilterValue(effectLevelValue.value, effectValueArray[0].valueMin, effectValueArray[0].valueMax) + ')';
+    } else if (imgUploadPreview.classList.contains(effectValueArray[1].name)) {
+      documentClassEffectForStyleFilter.style.filter = 'sepia(' + getFilterValue(effectLevelValue.value, effectValueArray[1].valueMin, effectValueArray[1].valueMax) + ')';
+    } else if (imgUploadPreview.classList.contains(effectValueArray[2].name)) {
+      documentClassEffectForStyleFilter.style.filter = 'invert(' + (getFilterValue(effectLevelValue.value, effectValueArray[2].valueMin, effectValueArray[2].valueMax) * MAX_INPUT_VALUE) + '%)';
+    } else if (imgUploadPreview.classList.contains(effectValueArray[3].name)) {
+      documentClassEffectForStyleFilter.style.filter = 'blur(' + getFilterValue(effectLevelValue.value, effectValueArray[3].valueMin, effectValueArray[3].valueMax) + 'px)';
+    } else if (imgUploadPreview.classList.contains(effectValueArray[4].name)) {
+      documentClassEffectForStyleFilter.style.filter = 'brightness(' + getFilterValue(effectLevelValue.value, effectValueArray[4].valueMin, effectValueArray[4].valueMax) + ')';
     }
   };
 })();
