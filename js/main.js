@@ -20,33 +20,28 @@ var imgUploadForm = document.querySelector('.img-upload__form');
 var radioCollection = document.querySelectorAll('.effects__radio');
 var textHashtags = document.querySelector('.text__hashtags');
 var textDescription = document.querySelector('.text__description');
+var imgUploadEffectLevel = document.querySelector('.img-upload__effect-level');
+var effectLevelLine = document.querySelector('.effect-level__line');
+var effectLevelPin = effectLevelLine.querySelector('.effect-level__pin');
+var effectLevelDepth = effectLevelLine.querySelector('.effect-level__depth');
+var effectLevelValue = document.querySelector('.effect-level__value');
 
 socialCommentCount.classList.add('visually-hidden');
 commentsLoader.classList.add('visually-hidden');
 
-// Массив с комментариями.
+
 var commentDataArray = ['Всё отлично!', 'В целом всё неплохо. Но не всё.', 'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.', 'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.', 'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.', 'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'];
-//
 
-// Массив с именами.
 var nameDataArray = ['Александр', 'Петр', 'Василиса', 'Диана', 'Владимир', 'Константин'];
-//
 
-// Переменная используется для создания модификатора к фото (во время прокликивания по эффектам в меню настроек фотографии). Происходи конкатенация этой переменной и массива, из которого достается нужный модификатор.
 var effectsClass = 'effects__preview';
-//
 
-// Массив с эффектами на фото.
 var effectsModifier = ['none', 'chrome', 'sepia', 'marvin', 'phobos', 'heat'];
-//
 
-// Функция рандома чисел
 var randomNumber = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
-//
 
-// Генерация массива данных  фото, а так же массива объектов с инфой о комментах.
 var getPhotosData = function () {
   var dataArray = [];
   for (var i = 1; i <= 25; i++) {
@@ -79,9 +74,7 @@ var getCommentsData = function () {
   }
   return commentsArray;
 };
-//
 
-// Ячейка под фотографию пользователя.
 var getUserPhotoSlot = function (photoData, idNumber) {
   var userPhoto = pictureTemplate.cloneNode(true);
   userPhoto.querySelector('.picture__img').src = photoData.url;
@@ -99,9 +92,7 @@ var runGenerationUsersPhoto = function (dataArray) {
   }
   return fragment;
 };
-//
 
-// Функции по генерации большой фотографии и комментов к ней.
 var runGenerationBigPhoto = function (photoData) {
   bigPicture.querySelector('.big-picture__img').querySelector('img').src = photoData.url;
   bigPicture.querySelector('.social__caption').textContent = 'description';
@@ -125,17 +116,11 @@ var runGenerationCommentsBigPhoto = function (commentsBigPhoto) {
   }
   return fragment;
 };
-//
 
-// Получаем массив с данными.
 var dataArray = getPhotosData();
-//
 
-// Добавление на страницу фото пользователей.
 picturesSection.appendChild(runGenerationUsersPhoto(dataArray));
-//
 
-// Отслеживание кликов через родительский элемент (делегирование)
 var addDelegationHandler = function (photoData) {
   picturesSection.addEventListener('click', function (evt) {
     var target = evt.target;
@@ -159,18 +144,12 @@ var openUserPhoto = function () {
 };
 
 addDelegationHandler(dataArray);
-//
 
-// Константы для номера(keyCode) клавиши ESC и ENTER.
 var ESC_KEYNUMBER = 27;
 var ENTER_KEYNUMBER = 13;
-//
 
-// Переменная для сброса классов у фото в меню настроек.
 var imgUploadPreviewString = 'img-upload__preview';
-//
 
-// Закрытие фото пользователя.
 var closeUserPhoto = function () {
   bigPicture.classList.add('hidden');
   socialComments.innerHTML = '';
@@ -192,21 +171,18 @@ bigPictureCancel.addEventListener('keydown', function (evt) {
     closeUserPhoto();
   }
 });
-//
 
-// Функция открытия настроек загруженной фотографии.
 var openPhotoSettings = function () {
   imgUploadOverlay.classList.remove('hidden');
   imgUploadPreview.classList.add(effectsClass + '--' + effectsModifier[0]);
+  imgUploadEffectLevel.classList.add('hidden');
   document.addEventListener('keydown', onEscPressSettings);
 };
 
 uploadFile.addEventListener('change', function () {
   openPhotoSettings();
 });
-//
 
-// Функция закрытия настроек фотографии.
 var closePhotoSettings = function () {
   imgUploadOverlay.classList.add('hidden');
   resetPhotoSettgins();
@@ -217,6 +193,7 @@ var resetPhotoSettgins = function () {
   uploadFile.value = '';
   imgUploadImage.style.removeProperty('transform');
   imgUploadPreview.className = imgUploadPreviewString;
+  imgUploadPreview.style = '';
   imgUploadForm.reset();
 };
 
@@ -230,15 +207,11 @@ var onEscPressSettings = function (evt) {
 uploadCancel.addEventListener('click', function () {
   closePhotoSettings();
 });
-//
 
-// Константы для значений в input (максимальное и минимальное значение) и шаг, на который будет увеличиваться значение, если нажимать кнопки + и -
 var MAX_INPUT_VALUE = 100;
 var MIN_INPUT_VALUE = 25;
 var VALUE_STEP = 25;
-//
 
-// Добавляется обработчик событий на кнопку +  и -.
 scaleControlBigger.addEventListener('click', function () {
   var foundScaleValue = findScaleValue('plus');
   addTransformScale(foundScaleValue);
@@ -261,22 +234,39 @@ var findScaleValue = function (symbol) {
   }
   return inputScaleValue;
 };
-//
 
-// Добавление CSS свойства transform: scale картинке пользователя. Зависит от настоящего значения scaleControlValue.value.
-// Если значение scaleControlValue.value = 50%, то transform: scale(0.5);
 var addTransformScale = function (valueScale) {
   var scaleValue = valueScale / 100;
   imgUploadImage.style.transform = 'scale(' + scaleValue + ')';
 };
-//
 
-// Добавление обработчика событий на эффекты в окне настройки фотографии.
+var classEffect;
+var documentClassEffectForStyleFilter;
+var MAX_PX_LEVEL_LINE = 453;
+
 var addEffectsCollectionClickHandler = function (radioButton, effect) {
   radioButton.addEventListener('click', function () {
     imgUploadPreview.className = imgUploadPreviewString;
     imgUploadPreview.classList.add(effectsClass + '--' + effect);
+    removeOptionsToDefault(effect);
+    if (imgUploadPreview.classList.contains('effects__preview--phobos')) {
+      imgUploadPreview.style.filter = 'blur(3px)';
+    }
   });
+};
+
+var removeOptionsToDefault = function (effect) {
+  classEffect = '.' + effectsClass + '--' + effect;
+  documentClassEffectForStyleFilter = document.querySelector(classEffect);
+  documentClassEffectForStyleFilter.style.filter = '';
+  if (imgUploadPreview.classList.contains('effects__preview--none')) {
+    imgUploadEffectLevel.classList.add('hidden');
+  } else {
+    effectLevelPin.style.left = MAX_PX_LEVEL_LINE + 'px';
+    effectLevelDepth.style.width = MAX_INPUT_VALUE + '%';
+    effectLevelValue.value = MAX_INPUT_VALUE;
+    imgUploadEffectLevel.classList.remove('hidden');
+  }
 };
 
 var showEffect = function () {
@@ -286,7 +276,6 @@ var showEffect = function () {
 };
 
 showEffect();
-//
 
 textHashtags.addEventListener('change', function () {
   hashTagsChecks();
@@ -339,3 +328,71 @@ var hashTagsChecks = function () {
     }
   }
 };
+
+(function () {
+  var defaultCoords;
+  var defaultWidthDepth;
+  var MIN_PX_LEVEL_LINE = 0;
+  var PIX_IN_ONE_STEP = MAX_PX_LEVEL_LINE / 100;
+
+  effectLevelPin.addEventListener('mousedown', function (evt) {
+    evt.preventDefault();
+    defaultCoords = {x: evt.clientX};
+    defaultWidthDepth = effectLevelDepth.offsetWidth;
+
+    document.addEventListener('mousemove', mouseMove);
+    document.addEventListener('mouseup', mouseUp);
+  });
+
+  var mouseMove = function (evtMove) {
+    evtMove.preventDefault();
+    findPinLocationAndEffectLine(evtMove);
+  };
+
+  var mouseUp = function (evtUp) {
+    evtUp.preventDefault();
+    findPinLocationAndEffectLine(evtUp);
+    document.removeEventListener('mousemove', mouseMove);
+    document.removeEventListener('mouseup', mouseUp);
+  };
+
+  var findPinLocationAndEffectLine = function (evtMove) {
+    var shift = {x: defaultCoords.x - evtMove.clientX};
+    defaultCoords = {x: evtMove.clientX};
+    var effectLevelPinLeft = (effectLevelPin.offsetLeft - shift.x);
+    if (MIN_PX_LEVEL_LINE <= effectLevelPinLeft && effectLevelPinLeft <= MAX_PX_LEVEL_LINE) {
+      effectLevelPin.style.left = effectLevelPinLeft + 'px';
+      defaultWidthDepth = effectLevelPinLeft;
+      effectLevelDepth.style.width = ((defaultWidthDepth * 100) / MAX_PX_LEVEL_LINE) + '%';
+      effectLevelValue.value = Math.round(effectLevelPinLeft / PIX_IN_ONE_STEP);
+      checkImgUploadPreviewContains();
+    }
+  };
+
+  var effectValueArray = [
+    {name: 'effects__preview--chrome', effect: 'grayscale', unit: '', valueMin: 0, valueMax: 1},
+    {name: 'effects__preview--sepia', effect: 'sepia', unit: '', valueMin: 0, valueMax: 1},
+    {name: 'effects__preview--marvin', effect: 'invert', unit: '%', valueMin: 0, valueMax: 100},
+    {name: 'effects__preview--phobos', effect: 'blur', unit: 'px', valueMin: 0, valueMax: 3},
+    {name: 'effects__preview--heat', effect: 'brightness', unit: '', valueMin: 1, valueMax: 3},
+  ];
+
+  var getFilterValue = function (actualFilterValue, minPinValue, maxPinValue) {
+    actualFilterValue = actualFilterValue / MAX_INPUT_VALUE;
+    if (minPinValue === 0) {
+      return actualFilterValue * maxPinValue;
+    } else {
+      return (maxPinValue - minPinValue) * actualFilterValue + minPinValue;
+    }
+  };
+
+  var checkImgUploadPreviewContains = function () {
+    for (var i = 0; i < effectValueArray.length; i++) {
+      if (imgUploadPreview.classList.contains(effectValueArray[i].name)) {
+        var actualValue = getFilterValue(effectLevelValue.value, effectValueArray[i].valueMin, effectValueArray[i].valueMax);
+        documentClassEffectForStyleFilter.style.filter = effectValueArray[i].effect + '(' + actualValue + effectValueArray[i].unit + ')';
+        break;
+      }
+    }
+  };
+})();
