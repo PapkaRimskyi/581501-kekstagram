@@ -371,11 +371,11 @@ var hashTagsChecks = function () {
   };
 
   var effectValueArray = [
-    {name: 'effects__preview--chrome', valueMin: 0, valueMax: 1},
-    {name: 'effects__preview--sepia', valueMin: 0, valueMax: 1},
-    {name: 'effects__preview--marvin', valueMin: 0, valueMax: 1},
-    {name: 'effects__preview--phobos', valueMin: 0, valueMax: 3},
-    {name: 'effects__preview--heat', valueMin: 1, valueMax: 3},
+    {name: 'effects__preview--chrome', effect: 'grayscale', unit: '', factor: 1, valueMin: 0, valueMax: 1},
+    {name: 'effects__preview--sepia', effect: 'sepia', unit: '', factor: 1, valueMin: 0, valueMax: 1},
+    {name: 'effects__preview--marvin', effect: 'invert', unit: '%', factor: 100, valueMin: 0, valueMax: 1},
+    {name: 'effects__preview--phobos', effect: 'blur', unit: 'px', factor: 1, valueMin: 0, valueMax: 3},
+    {name: 'effects__preview--heat', effect: 'brightness', unit: '', factor: 1, valueMin: 1, valueMax: 3},
   ];
 
   var getFilterValue = function (actualFilterValue, minPinValue, maxPinValue) {
@@ -390,16 +390,11 @@ var hashTagsChecks = function () {
   };
 
   var checkImgUploadPreviewContains = function () {
-    if (imgUploadPreview.classList.contains(effectValueArray[0].name)) {
-      documentClassEffectForStyleFilter.style.filter = 'grayscale(' + getFilterValue(effectLevelValue.value, effectValueArray[0].valueMin, effectValueArray[0].valueMax) + ')';
-    } else if (imgUploadPreview.classList.contains(effectValueArray[1].name)) {
-      documentClassEffectForStyleFilter.style.filter = 'sepia(' + getFilterValue(effectLevelValue.value, effectValueArray[1].valueMin, effectValueArray[1].valueMax) + ')';
-    } else if (imgUploadPreview.classList.contains(effectValueArray[2].name)) {
-      documentClassEffectForStyleFilter.style.filter = 'invert(' + (getFilterValue(effectLevelValue.value, effectValueArray[2].valueMin, effectValueArray[2].valueMax) * MAX_INPUT_VALUE) + '%)';
-    } else if (imgUploadPreview.classList.contains(effectValueArray[3].name)) {
-      documentClassEffectForStyleFilter.style.filter = 'blur(' + getFilterValue(effectLevelValue.value, effectValueArray[3].valueMin, effectValueArray[3].valueMax) + 'px)';
-    } else if (imgUploadPreview.classList.contains(effectValueArray[4].name)) {
-      documentClassEffectForStyleFilter.style.filter = 'brightness(' + getFilterValue(effectLevelValue.value, effectValueArray[4].valueMin, effectValueArray[4].valueMax) + ')';
+    for (var i = 0; i < effectValueArray.length; i++) {
+      if (imgUploadPreview.classList.contains(effectValueArray[i].name)) {
+        var actualValue = getFilterValue(effectLevelValue.value, effectValueArray[i].valueMin, effectValueArray[i].valueMax);
+        documentClassEffectForStyleFilter.style.filter = effectValueArray[i].effect + '(' + (actualValue * effectValueArray[i].factor) + effectValueArray[i].unit + ')';
+      }
     }
   };
 })();
