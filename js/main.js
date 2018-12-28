@@ -250,8 +250,7 @@ var addEffectsCollectionClickHandler = function (radioButton, effect) {
     imgUploadPreview.classList.add(effectsClass + '--' + effect);
     removeOptionsToDefault(effect);
     if (imgUploadPreview.classList.contains('effects__preview--phobos')) {
-      var classPhobosEffect = document.querySelector('.effects__preview--phobos');
-      classPhobosEffect.style.filter = 'blur(3px)';
+      imgUploadPreview.style.filter = 'blur(3px)';
     }
   });
 };
@@ -371,29 +370,28 @@ var hashTagsChecks = function () {
   };
 
   var effectValueArray = [
-    {name: 'effects__preview--chrome', effect: 'grayscale', unit: '', factor: 1, valueMin: 0, valueMax: 1},
-    {name: 'effects__preview--sepia', effect: 'sepia', unit: '', factor: 1, valueMin: 0, valueMax: 1},
-    {name: 'effects__preview--marvin', effect: 'invert', unit: '%', factor: 100, valueMin: 0, valueMax: 1},
-    {name: 'effects__preview--phobos', effect: 'blur', unit: 'px', factor: 1, valueMin: 0, valueMax: 3},
-    {name: 'effects__preview--heat', effect: 'brightness', unit: '', factor: 1, valueMin: 1, valueMax: 3},
+    {name: 'effects__preview--chrome', effect: 'grayscale', unit: '', valueMin: 0, valueMax: 1},
+    {name: 'effects__preview--sepia', effect: 'sepia', unit: '', valueMin: 0, valueMax: 1},
+    {name: 'effects__preview--marvin', effect: 'invert', unit: '%', valueMin: 0, valueMax: 100},
+    {name: 'effects__preview--phobos', effect: 'blur', unit: 'px', valueMin: 0, valueMax: 3},
+    {name: 'effects__preview--heat', effect: 'brightness', unit: '', valueMin: 1, valueMax: 3},
   ];
 
   var getFilterValue = function (actualFilterValue, minPinValue, maxPinValue) {
-    var filterValue;
     actualFilterValue = actualFilterValue / MAX_INPUT_VALUE;
     if (minPinValue === 0) {
-      filterValue = (actualFilterValue * maxPinValue);
+      return actualFilterValue * maxPinValue;
     } else {
-      filterValue = (maxPinValue - minPinValue) * actualFilterValue + minPinValue;
+      return (maxPinValue - minPinValue) * actualFilterValue + minPinValue;
     }
-    return filterValue;
   };
 
   var checkImgUploadPreviewContains = function () {
     for (var i = 0; i < effectValueArray.length; i++) {
       if (imgUploadPreview.classList.contains(effectValueArray[i].name)) {
         var actualValue = getFilterValue(effectLevelValue.value, effectValueArray[i].valueMin, effectValueArray[i].valueMax);
-        documentClassEffectForStyleFilter.style.filter = effectValueArray[i].effect + '(' + (actualValue * effectValueArray[i].factor) + effectValueArray[i].unit + ')';
+        documentClassEffectForStyleFilter.style.filter = effectValueArray[i].effect + '(' + actualValue + effectValueArray[i].unit + ')';
+        break;
       }
     }
   };
