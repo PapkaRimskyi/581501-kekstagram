@@ -9,9 +9,9 @@
   var ESC_KEYNUMBER = 27;
   var ENTER_KEYNUMBER = 13;
 
-  picturesSection.appendChild(window.runGenerationUsersPhoto(window.getPhotosData()));
+  window.load(window.userPhoto, window.errorLoadHandler);
 
-  var addDelegationHandler = function (photoData) {
+  window.addDelegationHandler = function (photoData) {
     picturesSection.addEventListener('click', function (evt) {
       var target = evt.target;
       if (target.className === 'picture__img') {
@@ -48,8 +48,4 @@
       closeUserPhoto();
     }
   });
-
-  addDelegationHandler(window.getPhotosData());
-
-
 })();
