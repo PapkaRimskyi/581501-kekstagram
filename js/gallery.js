@@ -9,7 +9,7 @@
   var ESC_KEYNUMBER = 27;
   var ENTER_KEYNUMBER = 13;
 
-  window.load(window.userPhoto, window.errorLoadHandler);
+  window.load(window.runGenerationUsersPhoto, window.errorLoadHandler);
 
   window.addDelegationHandler = function (photoData) {
     picturesSection.addEventListener('click', function (evt) {

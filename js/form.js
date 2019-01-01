@@ -52,11 +52,11 @@
 
   var closePhotoSettings = function () {
     imgUploadOverlay.classList.add('hidden');
-    window.resetPhotoSettgins();
+    resetPhotoSettgins();
     document.removeEventListener('keydown', onEscPressSettings);
   };
 
-  window.resetPhotoSettgins = function () {
+  var resetPhotoSettgins = function () {
     uploadFile.value = '';
     imgUploadImage.style.removeProperty('transform');
     imgUploadPreview.className = imgUploadPreviewString;
@@ -264,35 +264,28 @@
   var successTemplate = document.querySelector('#success').content;
 
   form.addEventListener('submit', function (evt) {
-    window.save(new FormData(form), window.successHandler, window.errorHandler);
+    window.save(new FormData(form), successHandler, errorHandler);
     evt.preventDefault();
     main.addEventListener('click', removeSection);
     document.addEventListener('keydown', onModalEscPress);
   });
 
-  window.errorHandler = function () {
+  var errorHandler = function () {
     closePhotoSettings();
     var errorMarkup = errorTemplate.cloneNode(true);
     main.appendChild(errorMarkup);
   };
 
-  window.successHandler = function () {
+  var successHandler = function () {
     closePhotoSettings();
     var successMarkup = successTemplate.cloneNode(true);
     main.appendChild(successMarkup);
   };
 
   var removeSection = function (evt) {
-    var successSection = document.querySelector('.success');
-    var errorSection = document.querySelector('.error');
     var target = evt.target;
-    if (target.className === 'success__button' || target.className !== 'success__inner' && target.className === 'success') {
-      main.removeChild(successSection);
-      main.removeEventListener('click', removeSection);
-    }
-    if (target.className === 'error__button' || target.className !== 'error__inner' && target.className === 'error') {
-      main.removeChild(errorSection);
-      main.removeEventListener('click', removeSection);
+    if (target.className === 'success__button' || target.className === 'success' || target.className === 'error__button' || target.className === 'error') {
+      closeModalWindow();
     }
   };
 
@@ -301,10 +294,12 @@
     var errorSection = document.querySelector('.error');
     if (main.contains(successSection)) {
       main.removeChild(successSection);
+      main.removeEventListener('click', removeSection);
       document.removeEventListener('keydown', onModalEscPress);
     }
     if (main.contains(errorSection)) {
       main.removeChild(errorSection);
+      main.removeEventListener('click', removeSection);
       document.removeEventListener('keydown', onModalEscPress);
     }
   };
