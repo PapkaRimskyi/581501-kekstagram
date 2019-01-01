@@ -267,6 +267,7 @@
     window.save(new FormData(form), window.successHandler, window.errorHandler);
     evt.preventDefault();
     main.addEventListener('click', removeSection);
+    document.addEventListener('keydown', onModalEscPress);
   });
 
   window.errorHandler = function () {
@@ -285,13 +286,32 @@
     var successSection = document.querySelector('.success');
     var errorSection = document.querySelector('.error');
     var target = evt.target;
-    if (target.className === 'success__button') {
+    if (target.className === 'success__button' || target.className !== 'success__inner' && target.className === 'success') {
       main.removeChild(successSection);
+      main.removeEventListener('click', removeSection);
     }
-    if (target.className === 'error__button') {
+    if (target.className === 'error__button' || target.className !== 'error__inner' && target.className === 'error') {
       main.removeChild(errorSection);
+      main.removeEventListener('click', removeSection);
     }
   };
 
-  main.removeEventListener('click', removeSection);
+  var closeModalWindow = function () {
+    var successSection = document.querySelector('.success');
+    var errorSection = document.querySelector('.error');
+    if (main.contains(successSection)) {
+      main.removeChild(successSection);
+      document.removeEventListener('keydown', onModalEscPress);
+    }
+    if (main.contains(errorSection)) {
+      main.removeChild(errorSection);
+      document.removeEventListener('keydown', onModalEscPress);
+    }
+  };
+
+  var onModalEscPress = function (evt) {
+    if (evt.keyCode === ESC_KEYNUMBER) {
+      closeModalWindow();
+    }
+  };
 })();
