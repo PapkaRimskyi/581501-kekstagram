@@ -12,7 +12,7 @@
 
   var runGenerationBigPhoto = function (photoData) {
     bigPicture.querySelector('.big-picture__img').querySelector('img').src = photoData.url;
-    bigPicture.querySelector('.social__caption').textContent = 'description';
+    bigPicture.querySelector('.social__caption').textContent = photoData.description;
     bigPicture.querySelector('.likes-count').textContent = photoData.likes;
     bigPicture.querySelector('.comments-count').textContent = photoData.comments.length;
   };

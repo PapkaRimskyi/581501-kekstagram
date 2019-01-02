@@ -12,12 +12,15 @@
     return userPhoto;
   };
 
+  var picturesSection = document.querySelector('.pictures');
+
   window.runGenerationUsersPhoto = function (dataArray) {
     var fragment = document.createDocumentFragment();
     for (var i = 0; i < dataArray.length; i++) {
       var userPhoto = getUserPhotoSlot(dataArray[i], i);
       fragment.appendChild(userPhoto);
     }
-    return fragment;
+    picturesSection.appendChild(fragment);
+    window.addDelegationHandler(dataArray);
   };
 })();

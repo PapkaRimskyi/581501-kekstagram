@@ -157,30 +157,41 @@
     return false;
   };
 
+  var changeInputBorder = function () {
+    textHashtags.style.borderColor = 'red';
+  };
+
   var hashTagsChecks = function () {
     var hashTagsArray = getHashTagsList();
     for (var i = 0; i < hashTagsArray.length; i++) {
       var indexSymbol = hashTagsArray[i].indexOf('#');
       if (indexSymbol !== 0) {
         textHashtags.setCustomValidity('Хэштег должен начинаться с символа #');
+        changeInputBorder();
         break;
       } else if (hashTagsArray[i].lastIndexOf('#') !== 0) {
         textHashtags.setCustomValidity('Хэштеги не разделены пробелами или присутствует два символа # подряд');
+        changeInputBorder();
         break;
       } else if (hashTagsArray[i].length === 1) {
         textHashtags.setCustomValidity('Хэштег не может состоять только из одной #');
+        changeInputBorder();
         break;
       } else if (hashTagsArray[i].length > MAX_HASHTAG_SYMBOLS) {
         textHashtags.setCustomValidity('Хэштег должен содержать не более 20 символов (включая #)');
+        changeInputBorder();
         break;
       } else if (hashTagsArray.length > COUNT_OF_MAX_HASHTAGS) {
         textHashtags.setCustomValidity('Количество ХэшТегов не должно превышать 5');
+        changeInputBorder();
         break;
       } else if (hasRepeatedWords(hashTagsArray)) {
         textHashtags.setCustomValidity('Нельзя писать повторные хэштеги');
+        changeInputBorder();
         break;
       } else {
         textHashtags.setCustomValidity('');
+        textHashtags.style = '';
       }
     }
   };
@@ -243,6 +254,59 @@
         documentClassEffectForStyleFilter.style.filter = effectValueArray[i].effect + '(' + actualValue + effectValueArray[i].unit + ')';
         break;
       }
+    }
+  };
+
+  var imgUploadWrapper = document.querySelector('.img-upload__wrapper');
+  var form = imgUploadWrapper.querySelector('.img-upload__form');
+  var main = document.querySelector('main');
+  var errorTemplate = document.querySelector('#error').content;
+  var successTemplate = document.querySelector('#success').content;
+
+  form.addEventListener('submit', function (evt) {
+    window.save(new FormData(form), successHandler, errorHandler);
+    evt.preventDefault();
+    main.addEventListener('click', removeSection);
+    document.addEventListener('keydown', onModalEscPress);
+  });
+
+  var errorHandler = function () {
+    closePhotoSettings();
+    var errorMarkup = errorTemplate.cloneNode(true);
+    main.appendChild(errorMarkup);
+  };
+
+  var successHandler = function () {
+    closePhotoSettings();
+    var successMarkup = successTemplate.cloneNode(true);
+    main.appendChild(successMarkup);
+  };
+
+  var removeSection = function (evt) {
+    var target = evt.target;
+    if (target.className === 'success__button' || target.className === 'success' || target.className === 'error__button' || target.className === 'error') {
+      closeModalWindow();
+    }
+  };
+
+  var closeModalWindow = function () {
+    var successSection = document.querySelector('.success');
+    var errorSection = document.querySelector('.error');
+    if (main.contains(successSection)) {
+      main.removeChild(successSection);
+      main.removeEventListener('click', removeSection);
+      document.removeEventListener('keydown', onModalEscPress);
+    }
+    if (main.contains(errorSection)) {
+      main.removeChild(errorSection);
+      main.removeEventListener('click', removeSection);
+      document.removeEventListener('keydown', onModalEscPress);
+    }
+  };
+
+  var onModalEscPress = function (evt) {
+    if (evt.keyCode === ESC_KEYNUMBER) {
+      closeModalWindow();
     }
   };
 })();
