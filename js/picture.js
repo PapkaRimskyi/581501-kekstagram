@@ -14,12 +14,20 @@
 
   var picturesSection = document.querySelector('.pictures');
 
+  var removePicture = function () {
+    var picture = document.querySelectorAll('.picture');
+    picture.forEach(function (a) {
+      a.remove();
+    });
+  };
+
   window.runGenerationUsersPhoto = function (dataArray) {
     var fragment = document.createDocumentFragment();
     for (var i = 0; i < dataArray.length; i++) {
       var userPhoto = getUserPhotoSlot(dataArray[i], i);
       fragment.appendChild(userPhoto);
     }
+    removePicture();
     picturesSection.appendChild(fragment);
     window.addDelegationHandler(dataArray);
   };
