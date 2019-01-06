@@ -6,6 +6,7 @@
   var socialComments = document.querySelector('.social__comments');
   var bigPictureCancel = bigPicture.querySelector('.big-picture__cancel');
   var imgFilters = document.querySelector('.img-filters');
+  var commentsLoader = document.querySelector('.comments-loader');
 
   var ESC_KEYNUMBER = 27;
   var ENTER_KEYNUMBER = 13;
@@ -33,6 +34,7 @@
 
   var openUserPhoto = function () {
     bigPicture.classList.remove('hidden');
+    window.moreComments();
     document.addEventListener('keydown', onEscPressUserPhoto);
   };
 
@@ -40,6 +42,8 @@
     bigPicture.classList.add('hidden');
     socialComments.innerHTML = '';
     document.removeEventListener('keydown', onEscPressUserPhoto);
+    commentsLoader.removeEventListener('click', window.moreComments);
+    commentsLoader.classList.remove('hidden');
   };
 
   var onEscPressUserPhoto = function (evt) {
