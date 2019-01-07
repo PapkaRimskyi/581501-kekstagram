@@ -29,6 +29,5 @@
     }
     removePicture();
     picturesSection.appendChild(fragment);
-    window.addDelegationHandler(dataArray);
   };
 })();

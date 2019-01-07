@@ -54,22 +54,3 @@
     commentsLoader.addEventListener('click', window.moreComments);
   };
 })();
-
-// window.generationUserPictureAndComments = function (photoDataId) {
-//   runGenerationBigPhoto(photoDataId);
-//   socialComments.innerHTML = '';
-//   socialComments.appendChild(runGenerationCommentsBigPhoto(photoDataId));
-//   commentsLoader.addEventListener('click', function () {
-//     socialComments.appendChild(runGenerationCommentsBigPhoto(photoDataId));
-//   });
-// };
-//
-// var runGenerationCommentsBigPhoto = function (commentsBigPhoto) {
-//   var commentsArray = commentsBigPhoto.comments;
-//   var fragment = document.createDocumentFragment();
-//   for (var i = 0; i < commentsArray.length; i++) {
-//     var userComment = getCommentForBigPhoto(commentsArray[i]);
-//     fragment.appendChild(userComment);
-//   }
-//   return fragment;
-// };
