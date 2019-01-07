@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  var DEBOUNCE_TIME = 15000;
+  var DEBOUNCE_TIME = 1500;
 
   window.debounce = function (cb) {
     var lastTimeout = null;

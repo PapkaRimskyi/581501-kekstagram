@@ -104,6 +104,12 @@
     buttonId.classList.add('img-filters__button--active');
   };
 
+  var testfunction = function () {
+    window.runGenerationUsersPhoto(getTenRandomPhoto());
+  };
+
+  var onClickWithDebounce = window.debounce(testfunction);
+
   filterPopular.addEventListener('click', function (evt) {
     evt.preventDefault();
     removeClassActive(filterPopular);
@@ -115,9 +121,10 @@
   filterNew.addEventListener('click', function (evt) {
     evt.preventDefault();
     removeClassActive(filterNew);
-    window.setTimeout(function () {
-      window.runGenerationUsersPhoto(getTenRandomPhoto());
-    }, 500);
+    onClickWithDebounce();
+    // window.setTimeout(function () {
+    //   window.runGenerationUsersPhoto(getTenRandomPhoto());
+    // }, 500);
   });
 
   filterDiscussed.addEventListener('click', function (evt) {
