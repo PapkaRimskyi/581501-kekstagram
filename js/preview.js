@@ -7,9 +7,6 @@
   var socialCommentCount = document.querySelector('.social__comment-count');
   var commentsLoader = document.querySelector('.comments-loader');
 
-  socialCommentCount.classList.add('visually-hidden');
-  commentsLoader.classList.add('visually-hidden');
-
   var runGenerationBigPhoto = function (photoData) {
     bigPicture.querySelector('.big-picture__img').querySelector('img').src = photoData.url;
     bigPicture.querySelector('.social__caption').textContent = photoData.description;
@@ -24,19 +21,36 @@
     return userComment;
   };
 
-  var runGenerationCommentsBigPhoto = function (commentsBigPhoto) {
-    var commentsArray = commentsBigPhoto.comments;
+  var COUNT_DEFAULT_COMMENTS = 5;
+
+  var runGenerationCommentsBigPhoto = function (comments) {
     var fragment = document.createDocumentFragment();
-    for (var i = 0; i < commentsArray.length; i++) {
-      var userComment = getCommentForBigPhoto(commentsArray[i]);
+    for (var i = 0; i < comments.length; i++) {
+      var userComment = getCommentForBigPhoto(comments[i]);
       fragment.appendChild(userComment);
     }
     return fragment;
   };
 
-  window.generationUserPictureAndComments = function (photoDataId) {
-    runGenerationBigPhoto(photoDataId);
+  window.generationUserPictureAndComments = function (photoData) {
+    runGenerationBigPhoto(photoData);
     socialComments.innerHTML = '';
-    socialComments.appendChild(runGenerationCommentsBigPhoto(photoDataId));
+
+    var INDEX_START = 0;
+
+    window.moreComments = function () {
+      var INDEX_END = INDEX_START + COUNT_DEFAULT_COMMENTS;
+      if (INDEX_END > photoData.comments.length) {
+        INDEX_END = photoData.comments.length;
+        if (INDEX_END === photoData.comments.length) {
+          commentsLoader.classList.add('hidden');
+        }
+      }
+      var commentsData = photoData.comments.slice(INDEX_START, INDEX_END);
+      socialComments.appendChild(runGenerationCommentsBigPhoto(commentsData));
+      INDEX_START = INDEX_END;
+      socialCommentCount.firstChild.textContent = INDEX_END + ' из ';
+    };
+    commentsLoader.addEventListener('click', window.moreComments);
   };
 })();
