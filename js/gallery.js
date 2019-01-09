@@ -36,9 +36,9 @@
       if (target.className === 'picture__img') {
         var targetId = target.getAttribute('data-id');
         if (filteredPhoto.length) {
-          window.preview.generateUserPhotoAndComments(filteredPhoto[targetId]);
+          window.preview.generationUserPictureAndComments(filteredPhoto[targetId]);
         } else {
-          window.preview.generateUserPhotoAndComments(photoData[targetId]);
+          window.preview.generationUserPictureAndComments(photoData[targetId]);
         }
         openUserPhoto();
       }
