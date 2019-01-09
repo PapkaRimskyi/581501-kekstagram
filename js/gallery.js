@@ -16,9 +16,9 @@
 
   var dataLoadSuccessHandler = function (data) {
     requestPhotoData = data;
-    window.picture(data);
+    window.picture.generateUserPhoto(data);
     imgFilters.classList.remove('img-filters--inactive');
-    window.addDelegationHandler(data);
+    addDelegationHandler(data);
   };
 
   var dataLoadErrorHandler = function (errorMessage) {
@@ -30,15 +30,15 @@
 
   window.backend.load(dataLoadSuccessHandler, dataLoadErrorHandler);
 
-  window.addDelegationHandler = function (photoData) {
+  var addDelegationHandler = function (photoData) {
     picturesSection.addEventListener('click', function (evt) {
       var target = evt.target;
       if (target.className === 'picture__img') {
         var targetId = target.getAttribute('data-id');
         if (filteredPhoto.length) {
-          window.preview(filteredPhoto[targetId]);
+          window.preview.generateUserPhotoAndComments(filteredPhoto[targetId]);
         } else {
-          window.preview(photoData[targetId]);
+          window.preview.generateUserPhotoAndComments(photoData[targetId]);
         }
         openUserPhoto();
       }
@@ -47,7 +47,7 @@
 
   var openUserPhoto = function () {
     bigPicture.classList.remove('hidden');
-    window.moreComments();
+    window.preview.showMoreComments();
     document.addEventListener('keydown', onEscPressUserPhoto);
   };
 
@@ -55,7 +55,7 @@
     bigPicture.classList.add('hidden');
     socialComments.innerHTML = '';
     document.removeEventListener('keydown', onEscPressUserPhoto);
-    commentsLoader.removeEventListener('click', window.moreComments);
+    commentsLoader.removeEventListener('click', window.preview.showMoreComments);
     commentsLoader.classList.remove('hidden');
   };
 
@@ -75,13 +75,9 @@
     }
   });
 
-  var shuffle = function () {
-    return Math.random() - 0.5;
-  };
-
   var getTenRandomPhoto = function () {
     var requestPhotoDataCopy = requestPhotoData.slice();
-    var tenRandomPhoto = requestPhotoDataCopy.sort(shuffle).slice(0, 10);
+    var tenRandomPhoto = requestPhotoDataCopy.sort(window.utils.shuffle).slice(0, 10);
     filteredPhoto = tenRandomPhoto;
     return tenRandomPhoto;
   };
@@ -105,7 +101,7 @@
       return commentsDiff;
     });
     filteredPhoto = sortedPhotoByComments;
-    window.picture(sortedPhotoByComments);
+    window.picture.generateUserPhoto(sortedPhotoByComments);
   };
 
   var removeClassActive = function (buttonId) {
@@ -117,11 +113,11 @@
   };
 
   var filterPopularDebounce = function () {
-    window.picture(requestPhotoData);
+    window.picture.generateUserPhoto(requestPhotoData);
   };
 
   var filterNewDebounce = function () {
-    window.picture(getTenRandomPhoto());
+    window.picture.generateUserPhoto(getTenRandomPhoto());
   };
 
   var filterDiscussedDebounce = function () {

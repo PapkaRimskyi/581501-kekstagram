@@ -6,6 +6,7 @@
   var socialComment = document.querySelector('.social__comment');
   var socialCommentCount = document.querySelector('.social__comment-count');
   var commentsLoader = document.querySelector('.comments-loader');
+  var showMoreComments;
 
   var COUNT_DEFAULT_COMMENTS = 5;
 
@@ -32,12 +33,12 @@
     return fragment;
   };
 
-  window.preview = function (photoData) {
+  var generationUserPictureAndComments = function (photoData) {
     var INDEX_START = 0;
     runGenerationBigPhoto(photoData);
     socialComments.innerHTML = '';
 
-    window.moreComments = function () {
+    showMoreComments = function () {
       var INDEX_END = INDEX_START + COUNT_DEFAULT_COMMENTS;
       if (INDEX_END > photoData.comments.length) {
         INDEX_END = photoData.comments.length;
@@ -50,6 +51,38 @@
       INDEX_START = INDEX_END;
       socialCommentCount.firstChild.textContent = INDEX_END + ' из ';
     };
-    commentsLoader.addEventListener('click', window.moreComments);
+    commentsLoader.addEventListener('click', showMoreComments);
+  };
+
+  window.preview = {
+    generateUserPhotoAndComments: generationUserPictureAndComments,
+    showMoreComments: showMoreComments
   };
 })();
+
+// var generationUserPictureAndComments = function (photoData) {
+//   var INDEX_START = 0;
+//   runGenerationBigPhoto(photoData);
+//   socialComments.innerHTML = '';
+//
+//   var showMoreComments = function () {
+//     var INDEX_END = INDEX_START + COUNT_DEFAULT_COMMENTS;
+//     if (INDEX_END > photoData.comments.length) {
+//       INDEX_END = photoData.comments.length;
+//       if (INDEX_END === photoData.comments.length) {
+//         commentsLoader.classList.add('hidden');
+//       }
+//     }
+//     var commentsData = photoData.comments.slice(INDEX_START, INDEX_END);
+//     socialComments.appendChild(runGenerationCommentsBigPhoto(commentsData));
+//     INDEX_START = INDEX_END;
+//     socialCommentCount.firstChild.textContent = INDEX_END + ' из ';
+//   };
+//   test = showMoreComments;
+//   commentsLoader.addEventListener('click', showMoreComments);
+// };
+//
+// window.preview = {
+//   generateUserPhotoAndComments: generationUserPictureAndComments,
+//   showMoreComments: test
+// };

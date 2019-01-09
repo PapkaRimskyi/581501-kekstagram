@@ -20,7 +20,7 @@
     });
   };
 
-  window.picture = function (dataArray) {
+  var runGenerationUsersPhoto = function (dataArray) {
     var fragment = document.createDocumentFragment();
     for (var i = 0; i < dataArray.length; i++) {
       var userPhoto = getUserPhotoSlot(dataArray[i], i);
@@ -28,5 +28,9 @@
     }
     removePicture();
     picturesSection.appendChild(fragment);
+  };
+
+  window.picture = {
+    generateUserPhoto: runGenerationUsersPhoto
   };
 })();
