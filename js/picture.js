@@ -2,6 +2,7 @@
 
 (function () {
   var pictureTemplate = document.querySelector('#picture').content;
+  var picturesSection = document.querySelector('.pictures');
 
   var getUserPhotoSlot = function (photoData, idNumber) {
     var userPhoto = pictureTemplate.cloneNode(true);
@@ -12,8 +13,6 @@
     return userPhoto;
   };
 
-  var picturesSection = document.querySelector('.pictures');
-
   var removePicture = function () {
     var picture = document.querySelectorAll('.picture');
     picture.forEach(function (a) {
@@ -21,7 +20,7 @@
     });
   };
 
-  window.runGenerationUsersPhoto = function (dataArray) {
+  window.picture = function (dataArray) {
     var fragment = document.createDocumentFragment();
     for (var i = 0; i < dataArray.length; i++) {
       var userPhoto = getUserPhotoSlot(dataArray[i], i);

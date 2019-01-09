@@ -11,20 +11,24 @@
   var filterDiscussed = document.getElementById('filter-discussed');
   var filterPopular = document.getElementById('filter-popular');
 
-  var ESC_KEYNUMBER = 27;
-  var ENTER_KEYNUMBER = 13;
-
   var requestPhotoData = [];
   var filteredPhoto = [];
 
-  var successHandler = function (data) {
+  var dataLoadSuccessHandler = function (data) {
     requestPhotoData = data;
-    window.runGenerationUsersPhoto(data);
+    window.picture(data);
     imgFilters.classList.remove('img-filters--inactive');
     window.addDelegationHandler(data);
   };
 
-  window.load(successHandler, window.errorLoadHandler);
+  var dataLoadErrorHandler = function (errorMessage) {
+    var node = document.createElement('div');
+    node.style = 'width: 250px; margin: 0 auto; text-align: center; background-color: darkblue; z-index: 100; line-height: 30px; position: absolute; left: 0; right: 0; font-size: 30px;';
+    node.textContent = errorMessage;
+    document.body.insertAdjacentElement('afterbegin', node);
+  };
+
+  window.backend.load(dataLoadSuccessHandler, dataLoadErrorHandler);
 
   window.addDelegationHandler = function (photoData) {
     picturesSection.addEventListener('click', function (evt) {
@@ -32,9 +36,9 @@
       if (target.className === 'picture__img') {
         var targetId = target.getAttribute('data-id');
         if (filteredPhoto.length) {
-          window.generationUserPictureAndComments(filteredPhoto[targetId]);
+          window.preview(filteredPhoto[targetId]);
         } else {
-          window.generationUserPictureAndComments(photoData[targetId]);
+          window.preview(photoData[targetId]);
         }
         openUserPhoto();
       }
@@ -56,7 +60,7 @@
   };
 
   var onEscPressUserPhoto = function (evt) {
-    if (evt.keyCode === ESC_KEYNUMBER) {
+    if (evt.keyCode === window.keyNumber.escNumber) {
       closeUserPhoto();
     }
   };
@@ -66,7 +70,7 @@
   });
 
   bigPictureCancel.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === ENTER_KEYNUMBER) {
+    if (evt.keyCode === window.keyNumber.enterNumber) {
       closeUserPhoto();
     }
   });
@@ -101,7 +105,7 @@
       return commentsDiff;
     });
     filteredPhoto = sortedPhotoByComments;
-    window.runGenerationUsersPhoto(sortedPhotoByComments);
+    window.picture(sortedPhotoByComments);
   };
 
   var removeClassActive = function (buttonId) {
@@ -113,11 +117,11 @@
   };
 
   var filterPopularDebounce = function () {
-    window.runGenerationUsersPhoto(requestPhotoData);
+    window.picture(requestPhotoData);
   };
 
   var filterNewDebounce = function () {
-    window.runGenerationUsersPhoto(getTenRandomPhoto());
+    window.picture(getTenRandomPhoto());
   };
 
   var filterDiscussedDebounce = function () {

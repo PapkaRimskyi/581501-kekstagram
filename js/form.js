@@ -4,7 +4,7 @@
   var imgUploadOverlay = document.querySelector('.img-upload__overlay');
   var imgUploadPreview = document.querySelector('.img-upload__preview');
   var imgUploadEffectLevel = document.querySelector('.img-upload__effect-level');
-  var uploadFile = document.getElementById('upload-file');
+  var uploadFile = document.querySelector('.img-upload__input');
   var imgUploadImage = imgUploadPreview.querySelector('.img-upload__image');
   var imgUploadForm = document.querySelector('.img-upload__form');
   var textHashtags = document.querySelector('.text__hashtags');
@@ -18,16 +18,23 @@
   var effectLevelDepth = effectLevelLine.querySelector('.effect-level__depth');
   var effectLevelValue = document.querySelector('.effect-level__value');
   var radioCollection = document.querySelectorAll('.effects__radio');
+  var imgUploadWrapper = document.querySelector('.img-upload__wrapper');
+  var form = imgUploadWrapper.querySelector('.img-upload__form');
+  var main = document.querySelector('main');
+  var errorTemplate = document.querySelector('#error').content;
+  var successTemplate = document.querySelector('#success').content;
 
   var imgUploadPreviewString = 'img-upload__preview';
   var effectsModifier = ['none', 'chrome', 'sepia', 'marvin', 'phobos', 'heat'];
   var effectsClass = 'effects__preview';
 
-  var defaultCoords;
-  var defaultWidthDepth;
-
-  var classEffect;
-  var documentClassEffectForStyleFilter;
+  var effectValueArray = [
+    {name: 'effects__preview--chrome', effect: 'grayscale', unit: '', valueMin: 0, valueMax: 1},
+    {name: 'effects__preview--sepia', effect: 'sepia', unit: '', valueMin: 0, valueMax: 1},
+    {name: 'effects__preview--marvin', effect: 'invert', unit: '%', valueMin: 0, valueMax: 100},
+    {name: 'effects__preview--phobos', effect: 'blur', unit: 'px', valueMin: 0, valueMax: 3},
+    {name: 'effects__preview--heat', effect: 'brightness', unit: '', valueMin: 1, valueMax: 3},
+  ];
 
   var MAX_INPUT_VALUE = 100;
   var MIN_INPUT_VALUE = 25;
@@ -35,9 +42,14 @@
   var MIN_PX_LEVEL_LINE = 0;
   var MAX_PX_LEVEL_LINE = 453;
   var PIX_IN_ONE_STEP = MAX_PX_LEVEL_LINE / 100;
-  var ESC_KEYNUMBER = 27;
   var MAX_HASHTAG_SYMBOLS = 20;
   var COUNT_OF_MAX_HASHTAGS = 5;
+
+  var defaultCoords;
+  var defaultWidthDepth;
+
+  var classEffect;
+  var documentClassEffectForStyleFilter;
 
   var openPhotoSettings = function () {
     imgUploadOverlay.classList.remove('hidden');
@@ -66,7 +78,7 @@
 
   var onEscPressSettings = function (evt) {
     var activeElement = document.activeElement;
-    if (evt.keyCode === ESC_KEYNUMBER && activeElement !== textHashtags && activeElement !== textDescription) {
+    if (evt.keyCode === window.keyNumber.escNumber && activeElement !== textHashtags && activeElement !== textDescription) {
       closePhotoSettings();
     }
   };
@@ -230,14 +242,6 @@
     }
   };
 
-  var effectValueArray = [
-    {name: 'effects__preview--chrome', effect: 'grayscale', unit: '', valueMin: 0, valueMax: 1},
-    {name: 'effects__preview--sepia', effect: 'sepia', unit: '', valueMin: 0, valueMax: 1},
-    {name: 'effects__preview--marvin', effect: 'invert', unit: '%', valueMin: 0, valueMax: 100},
-    {name: 'effects__preview--phobos', effect: 'blur', unit: 'px', valueMin: 0, valueMax: 3},
-    {name: 'effects__preview--heat', effect: 'brightness', unit: '', valueMin: 1, valueMax: 3},
-  ];
-
   var getFilterValue = function (actualFilterValue, minPinValue, maxPinValue) {
     actualFilterValue = actualFilterValue / MAX_INPUT_VALUE;
     if (minPinValue === 0) {
@@ -257,32 +261,26 @@
     }
   };
 
-  var imgUploadWrapper = document.querySelector('.img-upload__wrapper');
-  var form = imgUploadWrapper.querySelector('.img-upload__form');
-  var main = document.querySelector('main');
-  var errorTemplate = document.querySelector('#error').content;
-  var successTemplate = document.querySelector('#success').content;
-
   form.addEventListener('submit', function (evt) {
-    window.save(new FormData(form), successHandler, errorHandler);
+    window.backend.save(new FormData(form), successSaveFormHandler, errorSaveFormHandler);
     evt.preventDefault();
-    main.addEventListener('click', removeSection);
+    main.addEventListener('click', removeStatusSection);
     document.addEventListener('keydown', onModalEscPress);
   });
 
-  var errorHandler = function () {
+  var errorSaveFormHandler = function () {
     closePhotoSettings();
     var errorMarkup = errorTemplate.cloneNode(true);
     main.appendChild(errorMarkup);
   };
 
-  var successHandler = function () {
+  var successSaveFormHandler = function () {
     closePhotoSettings();
     var successMarkup = successTemplate.cloneNode(true);
     main.appendChild(successMarkup);
   };
 
-  var removeSection = function (evt) {
+  var removeStatusSection = function (evt) {
     var target = evt.target;
     if (target.className === 'success__button' || target.className === 'success' || target.className === 'error__button' || target.className === 'error') {
       closeModalWindow();
@@ -294,18 +292,18 @@
     var errorSection = document.querySelector('.error');
     if (main.contains(successSection)) {
       main.removeChild(successSection);
-      main.removeEventListener('click', removeSection);
+      main.removeEventListener('click', removeStatusSection);
       document.removeEventListener('keydown', onModalEscPress);
     }
     if (main.contains(errorSection)) {
       main.removeChild(errorSection);
-      main.removeEventListener('click', removeSection);
+      main.removeEventListener('click', removeStatusSection);
       document.removeEventListener('keydown', onModalEscPress);
     }
   };
 
   var onModalEscPress = function (evt) {
-    if (evt.keyCode === ESC_KEYNUMBER) {
+    if (evt.keyCode === window.keyNumber.escNumber) {
       closeModalWindow();
     }
   };
