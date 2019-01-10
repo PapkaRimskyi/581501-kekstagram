@@ -26,9 +26,9 @@
 
   var imgUploadPreviewString = 'img-upload__preview';
   var effectsModifier = ['none', 'chrome', 'sepia', 'marvin', 'phobos', 'heat'];
-  var effectsClass = 'effects__preview';
+  var effectClass = 'effects__preview';
 
-  var effectValueArray = [
+  var effectsValue = [
     {name: 'effects__preview--chrome', effect: 'grayscale', unit: '', valueMin: 0, valueMax: 1},
     {name: 'effects__preview--sepia', effect: 'sepia', unit: '', valueMin: 0, valueMax: 1},
     {name: 'effects__preview--marvin', effect: 'invert', unit: '%', valueMin: 0, valueMax: 100},
@@ -53,7 +53,7 @@
 
   var openPhotoSettings = function () {
     imgUploadOverlay.classList.remove('hidden');
-    imgUploadPreview.classList.add(effectsClass + '--' + effectsModifier[0]);
+    imgUploadPreview.classList.add(effectClass + '--' + effectsModifier[0]);
     imgUploadEffectLevel.classList.add('hidden');
     document.addEventListener('keydown', onEscPressSettings);
   };
@@ -118,7 +118,7 @@
   var addEffectsCollectionClickHandler = function (radioButton, effect) {
     radioButton.addEventListener('click', function () {
       imgUploadPreview.className = imgUploadPreviewString;
-      imgUploadPreview.classList.add(effectsClass + '--' + effect);
+      imgUploadPreview.classList.add(effectClass + '--' + effect);
       removeOptionsToDefault(effect);
       if (imgUploadPreview.classList.contains('effects__preview--phobos')) {
         imgUploadPreview.style.filter = 'blur(3px)';
@@ -127,7 +127,7 @@
   };
 
   var removeOptionsToDefault = function (effect) {
-    classEffect = '.' + effectsClass + '--' + effect;
+    classEffect = '.' + effectClass + '--' + effect;
     documentClassEffectForStyleFilter = document.querySelector(classEffect);
     documentClassEffectForStyleFilter.style.filter = '';
     if (imgUploadPreview.classList.contains('effects__preview--none')) {
@@ -177,7 +177,11 @@
     var hashTagsArray = getHashTagsList();
     for (var i = 0; i < hashTagsArray.length; i++) {
       var indexSymbol = hashTagsArray[i].indexOf('#');
-      if (indexSymbol !== 0) {
+      if (textHashtags.value === '') {
+        textHashtags.setCustomValidity('');
+        textHashtags.style = '';
+        break;
+      } else if (indexSymbol !== 0) {
         textHashtags.setCustomValidity('Хэштег должен начинаться с символа #');
         changeInputBorder();
         break;
@@ -252,10 +256,10 @@
   };
 
   var checkImgUploadPreviewContains = function () {
-    for (var i = 0; i < effectValueArray.length; i++) {
-      if (imgUploadPreview.classList.contains(effectValueArray[i].name)) {
-        var actualValue = getFilterValue(effectLevelValue.value, effectValueArray[i].valueMin, effectValueArray[i].valueMax);
-        documentClassEffectForStyleFilter.style.filter = effectValueArray[i].effect + '(' + actualValue + effectValueArray[i].unit + ')';
+    for (var i = 0; i < effectsValue.length; i++) {
+      if (imgUploadPreview.classList.contains(effectsValue[i].name)) {
+        var actualValue = getFilterValue(effectLevelValue.value, effectsValue[i].valueMin, effectsValue[i].valueMax);
+        documentClassEffectForStyleFilter.style.filter = effectsValue[i].effect + '(' + actualValue + effectsValue[i].unit + ')';
         break;
       }
     }
