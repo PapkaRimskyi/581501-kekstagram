@@ -177,7 +177,7 @@
     var hashTagsArray = getHashTagsList();
     for (var i = 0; i < hashTagsArray.length; i++) {
       var indexSymbol = hashTagsArray[i].indexOf('#');
-      if (textHashtags.value === '') {
+      if (textHashtags.value === '' || hashTagsArray[i] === '') {
         textHashtags.setCustomValidity('');
         textHashtags.style = '';
         break;
