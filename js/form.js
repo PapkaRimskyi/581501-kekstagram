@@ -148,13 +148,13 @@
 
   showEffect();
 
-  textHashtags.addEventListener('change', function () {
+  textHashtags.addEventListener('input', function () {
     hashTagsChecks();
   });
 
   var getHashTagsList = function () {
     var inputValue = textHashtags.value.toUpperCase();
-    var hashTags = inputValue.split(' ');
+    var hashTags = inputValue.trim().split(' ');
     return hashTags;
   };
 
@@ -175,6 +175,7 @@
 
   var hashTagsChecks = function () {
     var hashTagsArray = getHashTagsList();
+    console.log(hashTagsArray);
     for (var i = 0; i < hashTagsArray.length; i++) {
       var indexSymbol = hashTagsArray[i].indexOf('#');
       if (textHashtags.value === '') {
