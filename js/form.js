@@ -148,13 +148,13 @@
 
   showEffect();
 
-  textHashtags.addEventListener('change', function () {
+  textHashtags.addEventListener('input', function () {
     hashTagsChecks();
   });
 
   var getHashTagsList = function () {
     var inputValue = textHashtags.value.toUpperCase();
-    var hashTags = inputValue.split(' ');
+    var hashTags = inputValue.trim().split(' ');
     return hashTags;
   };
 
