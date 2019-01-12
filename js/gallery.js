@@ -18,7 +18,7 @@
     requestPhotoData = data;
     window.picture.generateUserPhoto(data);
     imgFilters.classList.remove('img-filters--inactive');
-    addDelegationHandler(data);
+    userPictureClickHandler(data);
   };
 
   var dataLoadErrorHandler = function (errorMessage) {
@@ -30,7 +30,7 @@
 
   window.backend.load(dataLoadSuccessHandler, dataLoadErrorHandler);
 
-  var werePhotosFiltered = function (photData, targtId) {
+  var startGenerationPhotoArray = function (photData, targtId) {
     if (filteredPhoto.length) {
       window.preview.generationUserPictureAndComments(filteredPhoto[targtId]);
     } else {
@@ -39,12 +39,12 @@
     openUserPhoto();
   };
 
-  var addDelegationHandler = function (photoData) {
+  var userPictureClickHandler = function (photoData) {
     picturesSection.addEventListener('click', function (evt) {
       var target = evt.target;
       if (target.className === 'picture__img') {
         var targetId = target.getAttribute('data-id');
-        werePhotosFiltered(photoData, targetId);
+        startGenerationPhotoArray(photoData, targetId);
       }
     });
 
@@ -52,7 +52,7 @@
       var target = evt.target;
       if (evt.keyCode === window.keyNumber.enterNumber && target.className === 'picture') {
         var targetId = target.querySelector('.picture__img').getAttribute('data-id');
-        werePhotosFiltered(photoData, targetId);
+        startGenerationPhotoArray(photoData, targetId);
       }
     });
   };
