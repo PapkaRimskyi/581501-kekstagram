@@ -175,7 +175,6 @@
 
   var hashTagsChecks = function () {
     var hashTagsArray = getHashTagsList();
-    console.log(hashTagsArray);
     for (var i = 0; i < hashTagsArray.length; i++) {
       var indexSymbol = hashTagsArray[i].indexOf('#');
       if (textHashtags.value === '') {
