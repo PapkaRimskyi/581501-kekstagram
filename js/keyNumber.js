@@ -2,7 +2,7 @@
 
 (function () {
   window.keyNumber = {
-    escNumber: 27,
-    enterNumber: 13
+    escButton: 27,
+    enterButton: 13
   };
 })();

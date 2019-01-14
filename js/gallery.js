@@ -50,7 +50,7 @@
 
     picturesSection.addEventListener('keydown', function (evt) {
       var target = evt.target;
-      if (evt.keyCode === window.keyNumber.enterNumber && target.className === 'picture') {
+      if (evt.keyCode === window.keyNumber.enterButton && target.className === 'picture') {
         var targetId = target.querySelector('.picture__img').getAttribute('data-id');
         startGenerationPhotoArray(photoData, targetId);
       }
@@ -72,7 +72,7 @@
   };
 
   var onEscPressUserPhoto = function (evt) {
-    if (evt.keyCode === window.keyNumber.escNumber) {
+    if (evt.keyCode === window.keyNumber.escButton) {
       closeUserPhoto();
     }
   };
@@ -82,7 +82,7 @@
   });
 
   bigPictureCancel.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === window.keyNumber.enterNumber) {
+    if (evt.keyCode === window.keyNumber.enterButton) {
       closeUserPhoto();
     }
   });

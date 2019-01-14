@@ -1,6 +1,16 @@
 'use strict';
 
 (function () {
+  var MAX_INPUT_VALUE = 100;
+  var MIN_INPUT_VALUE = 25;
+  var VALUE_STEP = 25;
+  var MIN_PX_LEVEL_LINE = 0;
+  var MAX_PX_LEVEL_LINE = 453;
+  var PIX_IN_ONE_STEP = MAX_PX_LEVEL_LINE / 100;
+  var MAX_HASHTAG_SYMBOLS = 20;
+  var COUNT_OF_MAX_HASHTAGS = 5;
+  var DEFAULT_SCALE = 100;
+
   var imgUploadOverlay = document.querySelector('.img-upload__overlay');
   var imgUploadPreview = document.querySelector('.img-upload__preview');
   var imgUploadEffectLevel = document.querySelector('.img-upload__effect-level');
@@ -36,15 +46,6 @@
     {name: 'effects__preview--heat', effect: 'brightness', unit: '', valueMin: 1, valueMax: 3},
   ];
 
-  var MAX_INPUT_VALUE = 100;
-  var MIN_INPUT_VALUE = 25;
-  var VALUE_STEP = 25;
-  var MIN_PX_LEVEL_LINE = 0;
-  var MAX_PX_LEVEL_LINE = 453;
-  var PIX_IN_ONE_STEP = MAX_PX_LEVEL_LINE / 100;
-  var MAX_HASHTAG_SYMBOLS = 20;
-  var COUNT_OF_MAX_HASHTAGS = 5;
-
   var defaultCoords;
   var defaultWidthDepth;
 
@@ -78,7 +79,7 @@
 
   var onEscPressSettings = function (evt) {
     var activeElement = document.activeElement;
-    if (evt.keyCode === window.keyNumber.escNumber && activeElement !== textHashtags && activeElement !== textDescription) {
+    if (evt.keyCode === window.keyNumber.escButton && activeElement !== textHashtags && activeElement !== textDescription) {
       closePhotoSettings();
     }
   };
@@ -103,15 +104,14 @@
     var inputScaleValue = parseInt(scaleControlValue.value, 10);
     if (inputScaleValue !== MAX_INPUT_VALUE && symbol === 'plus') {
       inputScaleValue += VALUE_STEP;
-    }
-    if (inputScaleValue !== MIN_INPUT_VALUE && symbol === 'minus') {
+    } else if (inputScaleValue !== MIN_INPUT_VALUE && symbol === 'minus') {
       inputScaleValue -= VALUE_STEP;
     }
     return inputScaleValue;
   };
 
   var addTransformScale = function (valueScale) {
-    var scaleValue = valueScale / 100;
+    var scaleValue = valueScale / DEFAULT_SCALE;
     imgUploadImage.style.transform = 'scale(' + scaleValue + ')';
   };
 
@@ -217,20 +217,20 @@
     defaultCoords = {x: evt.clientX};
     defaultWidthDepth = effectLevelDepth.offsetWidth;
 
-    document.addEventListener('mousemove', mouseMove);
-    document.addEventListener('mouseup', mouseUp);
+    document.addEventListener('mousemove', effectLevelPinMoveHandler);
+    document.addEventListener('mouseup', effectLevelPinUpHandler);
   });
 
-  var mouseMove = function (evtMove) {
+  var effectLevelPinMoveHandler = function (evtMove) {
     evtMove.preventDefault();
     findPinLocationAndEffectLine(evtMove);
   };
 
-  var mouseUp = function (evtUp) {
+  var effectLevelPinUpHandler = function (evtUp) {
     evtUp.preventDefault();
     findPinLocationAndEffectLine(evtUp);
-    document.removeEventListener('mousemove', mouseMove);
-    document.removeEventListener('mouseup', mouseUp);
+    document.removeEventListener('mousemove', effectLevelPinMoveHandler);
+    document.removeEventListener('mouseup', effectLevelPinUpHandler);
   };
 
   var findPinLocationAndEffectLine = function (evtMove) {
@@ -268,7 +268,7 @@
   form.addEventListener('submit', function (evt) {
     window.backend.save(new FormData(form), successSaveFormHandler, errorSaveFormHandler);
     evt.preventDefault();
-    main.addEventListener('click', removeStatusSection);
+    main.addEventListener('click', innerButtonClickHandler);
     document.addEventListener('keydown', onModalEscPress);
   });
 
@@ -284,7 +284,7 @@
     main.appendChild(successMarkup);
   };
 
-  var removeStatusSection = function (evt) {
+  var innerButtonClickHandler = function (evt) {
     var target = evt.target;
     if (target.className === 'success__button' || target.className === 'success' || target.className === 'error__button' || target.className === 'error') {
       closeModalWindow();
@@ -296,18 +296,17 @@
     var errorSection = document.querySelector('.error');
     if (main.contains(successSection)) {
       main.removeChild(successSection);
-      main.removeEventListener('click', removeStatusSection);
+      main.removeEventListener('click', innerButtonClickHandler);
       document.removeEventListener('keydown', onModalEscPress);
-    }
-    if (main.contains(errorSection)) {
+    } else if (main.contains(errorSection)) {
       main.removeChild(errorSection);
-      main.removeEventListener('click', removeStatusSection);
+      main.removeEventListener('click', innerButtonClickHandler);
       document.removeEventListener('keydown', onModalEscPress);
     }
   };
 
   var onModalEscPress = function (evt) {
-    if (evt.keyCode === window.keyNumber.escNumber) {
+    if (evt.keyCode === window.keyNumber.escButton) {
       closeModalWindow();
     }
   };
