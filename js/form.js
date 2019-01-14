@@ -79,7 +79,7 @@
 
   var onEscPressSettings = function (evt) {
     var activeElement = document.activeElement;
-    if (evt.keyCode === window.keyNumber.escButton && activeElement !== textHashtags && activeElement !== textDescription) {
+    if (evt.keyCode === window.constants.keyCode.ESC && activeElement !== textHashtags && activeElement !== textDescription) {
       closePhotoSettings();
     }
   };
@@ -306,7 +306,7 @@
   };
 
   var onModalEscPress = function (evt) {
-    if (evt.keyCode === window.keyNumber.escButton) {
+    if (evt.keyCode === window.constants.keyCode.ESC) {
       closeModalWindow();
     }
   };

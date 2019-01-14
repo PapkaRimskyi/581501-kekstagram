@@ -1,7 +1,6 @@
 'use strict';
 
 (function () {
-  var picturesSection = document.querySelector('.pictures');
   var bigPicture = document.querySelector('.big-picture');
   var socialComments = document.querySelector('.social__comments');
   var bigPictureCancel = bigPicture.querySelector('.big-picture__cancel');
@@ -40,7 +39,7 @@
   };
 
   var userPictureClickHandler = function (photoData) {
-    picturesSection.addEventListener('click', function (evt) {
+    window.picture.picturesSection.addEventListener('click', function (evt) {
       var target = evt.target;
       if (target.className === 'picture__img') {
         var targetId = target.getAttribute('data-id');
@@ -48,9 +47,9 @@
       }
     });
 
-    picturesSection.addEventListener('keydown', function (evt) {
+    window.picture.picturesSection.addEventListener('keydown', function (evt) {
       var target = evt.target;
-      if (evt.keyCode === window.keyNumber.enterButton && target.className === 'picture') {
+      if (evt.keyCode === window.constants.keyCode.ENTER && target.className === 'picture') {
         var targetId = target.querySelector('.picture__img').getAttribute('data-id');
         startGenerationPhotoArray(photoData, targetId);
       }
@@ -72,7 +71,7 @@
   };
 
   var onEscPressUserPhoto = function (evt) {
-    if (evt.keyCode === window.keyNumber.escButton) {
+    if (evt.keyCode === window.constants.keyCode.ESC) {
       closeUserPhoto();
     }
   };
@@ -82,7 +81,7 @@
   });
 
   bigPictureCancel.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === window.keyNumber.enterButton) {
+    if (evt.keyCode === window.constants.keyCode.ENTER) {
       closeUserPhoto();
     }
   });

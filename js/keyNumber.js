@@ -1,8 +1,10 @@
 'use strict';
 
 (function () {
-  window.keyNumber = {
-    escButton: 27,
-    enterButton: 13
+  window.constants = {
+    keyCode: {
+      ESC: 27,
+      ENTER: 13
+    }
   };
 })();
