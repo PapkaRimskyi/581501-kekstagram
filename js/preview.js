@@ -38,17 +38,17 @@
     socialComments.innerHTML = '';
 
     window.preview.showMoreComments = function () {
-      var INDEX_END = indexStart + COUNT_DEFAULT_COMMENTS;
-      if (INDEX_END > photoData.comments.length) {
-        INDEX_END = photoData.comments.length;
-        if (INDEX_END === photoData.comments.length) {
+      var indexEnd = indexStart + COUNT_DEFAULT_COMMENTS;
+      if (indexEnd > photoData.comments.length) {
+        indexEnd = photoData.comments.length;
+        if (indexEnd === photoData.comments.length) {
           commentsLoader.classList.add('hidden');
         }
       }
-      var commentsData = photoData.comments.slice(indexStart, INDEX_END);
+      var commentsData = photoData.comments.slice(indexStart, indexEnd);
       socialComments.appendChild(runGenerationCommentsBigPhoto(commentsData));
-      indexStart = INDEX_END;
-      socialCommentCount.firstChild.textContent = INDEX_END + ' из ';
+      indexStart = indexEnd;
+      socialCommentCount.firstChild.textContent = indexEnd + ' из ';
     };
     commentsLoader.addEventListener('click', window.preview.showMoreComments);
   };
