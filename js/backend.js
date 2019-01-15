@@ -3,18 +3,24 @@
 (function () {
   var URL_SAVE = 'https://js.dump.academy/kekstagram';
   var URL_LOAD = 'https://js.dump.academy/kekstagram/data';
+  var SUCCESS_STATUS_CODE = 200;
 
-  var save = function (data, onLoad, onError) {
+  var getRequestPreparation = function (onLoad, onError) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
 
     xhr.addEventListener('load', function () {
-      if (xhr.status === 200) {
+      if (xhr.status === SUCCESS_STATUS_CODE) {
         onLoad(xhr.response);
       } else {
         onError('Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
       }
     });
+    return xhr;
+  };
+
+  var save = function (data, onLoad, onError) {
+    var xhr = getRequestPreparation(onLoad, onError);
 
     xhr.addEventListener('error', function () {
       onError('Ошибка ' + xhr.status + ' ' + xhr.statusText);
@@ -25,16 +31,7 @@
   };
 
   var load = function (onLoad, onError) {
-    var xhr = new XMLHttpRequest();
-    xhr.responseType = 'json';
-
-    xhr.addEventListener('load', function () {
-      if (xhr.status === 200) {
-        onLoad(xhr.response);
-      } else {
-        onError('Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
-      }
-    });
+    var xhr = getRequestPreparation(onLoad, onError);
 
     xhr.addEventListener('error', function () {
       onError('Произошла ошибка соединения');

@@ -31,6 +31,7 @@
   };
 
   window.picture = {
-    generateUserPhoto: runGenerationUsersPhoto
+    generateUserPhoto: runGenerationUsersPhoto,
+    picturesSection: picturesSection
   };
 })();
